@@ -8,7 +8,7 @@ public class FileTreeNode implements TreeNode {
 
     private FileTreeNode parent;
     private List<FileTreeNode> children = null;
-    private File descriptor;
+    private File file;
 
     public FileTreeNode(File descriptor, FileTreeNode parent) {
         if (descriptor == null) {
@@ -16,11 +16,24 @@ public class FileTreeNode implements TreeNode {
         }
 
         this.parent = parent;
-        this.descriptor = descriptor;
+        this.file = descriptor;
     }
 
     public FileTreeNode(File descriptor) {
         this(descriptor, null);
+    }
+
+    public boolean rename(String newName) {
+        File newFile = new File(file.getParent(), newName);
+        if (!newFile.getParent().equals(file.getParent())) {
+            return false;
+        }
+
+        if (file.renameTo(newFile)) {
+            file = newFile;
+            return true;
+        }
+        return false;
     }
 
     public void reparent(FileTreeNode newParent) {
@@ -39,7 +52,7 @@ public class FileTreeNode implements TreeNode {
     }
 
     public void lazyLoadChildren() {
-        if (descriptor.isFile()) {
+        if (file.isFile()) {
             return;
         }
 
@@ -49,7 +62,7 @@ public class FileTreeNode implements TreeNode {
             children.clear();
         }
 
-        File[] filesInDirectory = descriptor.listFiles();
+        File[] filesInDirectory = file.listFiles();
         // even though it technically should never be null, that's pretty much what our guard-clause is for,
         // but in some weird, hacky Windows-tested edge cases, it can indeed happen that a file is seemingly
         // a directory but one cannot access its contents
@@ -64,7 +77,7 @@ public class FileTreeNode implements TreeNode {
 
     @Override
     public TreeNode getChildAt(int childIndex) {
-        if (descriptor.isFile()) {
+        if (file.isFile()) {
             return null;
         }
 
@@ -75,11 +88,11 @@ public class FileTreeNode implements TreeNode {
 
     @Override
     public int getChildCount() {
-        if (descriptor.isFile()) {
+        if (file.isFile()) {
             return 0;
         }
 
-        File[] filesInDirectory = descriptor.listFiles();
+        File[] filesInDirectory = file.listFiles();
         if (filesInDirectory == null) {
             return 0;
         }
@@ -104,7 +117,7 @@ public class FileTreeNode implements TreeNode {
 
     @Override
     public boolean isLeaf() {
-        return descriptor.isFile();
+        return file.isFile();
     }
 
     @Override
@@ -115,9 +128,9 @@ public class FileTreeNode implements TreeNode {
     @Override
     public String toString() {
         if (parent != null) {
-            return descriptor.getName();
+            return file.getName();
         }
 
-        return descriptor.getAbsolutePath();
+        return file.getAbsolutePath();
     }
 }

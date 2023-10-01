@@ -1,9 +1,11 @@
 package filetree;
 
+import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,8 +44,12 @@ public class FileTreeModel implements TreeModel {
 
     @Override
     public void valueForPathChanged(TreePath path, Object newValue) {
-        for (TreeModelListener listener : listeners) {
-            // TODO
+        String newName = (String) newValue;
+        FileTreeNode node = (FileTreeNode) path.getLastPathComponent();
+        if (node.rename(newName)) {
+            for (TreeModelListener listener : listeners) {
+                listener.treeNodesChanged(new TreeModelEvent(node, path));
+            }
         }
     }
 

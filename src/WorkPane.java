@@ -2,7 +2,9 @@ import filetree.FileTreeModel;
 
 import javax.swing.*;
 import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreePath;
 import java.awt.*;
+import java.awt.dnd.DropTarget;
 
 public class WorkPane extends JComponent {
 
@@ -16,8 +18,8 @@ public class WorkPane extends JComponent {
         TreeModel model = new FileTreeModel();
         JTree tree = new JTree();
         tree.setModel(model);
-        JScrollPane scrollPane = new JScrollPane(tree);
-        panel.add(scrollPane, BorderLayout.CENTER);
+        tree.setEditable(true);
+        panel.add(new JScrollPane(tree), BorderLayout.CENTER);
 
         add(panel);
 
