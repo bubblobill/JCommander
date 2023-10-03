@@ -1,9 +1,8 @@
-package directorylist;
+package jcommander.pane.directorylist;
 
 import javax.swing.*;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
-import javax.swing.event.TreeModelListener;
 import java.io.File;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
@@ -12,6 +11,7 @@ import java.util.List;
 public class DirectoryListModel implements ListModel<File> {
 
     File directory;
+
     File[] listOfFiles;
     private final List<ListDataListener> listeners = new ArrayList<>();
 
@@ -20,6 +20,15 @@ public class DirectoryListModel implements ListModel<File> {
             throw new InvalidParameterException("Parameter must be a directory");
         }
 
+        this.directory = directory;
+        refreshDirectoryContent();
+    }
+
+    public File getDirectory() {
+        return directory;
+    }
+
+    public void setDirectory(File directory) {
         this.directory = directory;
         refreshDirectoryContent();
     }
@@ -35,7 +44,7 @@ public class DirectoryListModel implements ListModel<File> {
 
     private void notifyAllDirectoryChanged() {
         ListDataEvent e = new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED,
-                0, listOfFiles.length - 1);
+                0, listOfFiles.length);
         for (ListDataListener listener : listeners) {
                 listener.contentsChanged(e);
         }

@@ -1,15 +1,13 @@
+package jcommander;
+
+import jcommander.pane.WorkPane;
+
 import javax.swing.*;
 import java.awt.*;
 
+import static jcommander.ResourceFactory.getSquareIcon;
+
 public class CommanderInstance {
-
-    public static final int ICON_SIZE = 32;
-
-    // TODO: move these to some other class
-    private static ImageIcon getSquareIcon(String filename) {
-        Image image = new ImageIcon("images/" + filename).getImage();
-        return new ImageIcon(image.getScaledInstance(ICON_SIZE, ICON_SIZE, Image.SCALE_DEFAULT));
-    }
 
     private final JFrame frame;
     private WorkPane activePane;
@@ -72,9 +70,6 @@ public class CommanderInstance {
         container.add(topBar, BorderLayout.NORTH);
     }
 
-    private void openFindDialog() {
-    }
-
     private void createCenterBar(Container container) {
         JToolBar centerBar = new JToolBar(JToolBar.VERTICAL);
         centerBar.setFloatable(false);
@@ -87,6 +82,9 @@ public class CommanderInstance {
         move.addActionListener(e -> issueMoveOperation());
         centerBar.add(move);
         container.add(centerBar, BorderLayout.CENTER);
+    }
+
+    private void openFindDialog() {
     }
 
     private void issueCopyOperation() {

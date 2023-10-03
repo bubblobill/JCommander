@@ -1,10 +1,15 @@
-import directorylist.DirectoryListModel;
-import filetree.FileTreeModel;
+package jcommander.pane;
+
+import jcommander.pane.directorylist.DirectoryListModel;
+import jcommander.pane.directorylist.FileCellRenderer;
+import jcommander.pane.filetree.FileTreeModel;
 
 import javax.swing.*;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.Stack;
 
@@ -37,16 +42,21 @@ public class WorkPane extends JComponent {
 
         directoryModel = new DirectoryListModel(File.listRoots()[0]);
         list = new JList<>(directoryModel);
-//        list.setCellRenderer((list, file, index, isSelected, cellHasFocus) -> {
-//            JPanel cell = new JPanel();
-//            JLabel text = new JLabel(file.getName());
-//            text.setHorizontalAlignment(SwingConstants.LEFT);
-//            cell.add(text);
-//            cell.setBackground(Color.LIGHT_GRAY);
-//            return cell;
-//        });
         list.getSelectionModel().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        list.setCellRenderer(new FileCellRenderer());
         list.setDragEnabled(true);
+        list.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    int index = list.locationToIndex(e.getPoint());
+                    File file = directoryModel.getElementAt(index);
+                    if (file.isDirectory()) {
+                        directoryModel.setDirectory(file);
+                    }
+                }
+            }
+        });
 
         JSplitPane views = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new JScrollPane(tree), new JScrollPane(list));
 
