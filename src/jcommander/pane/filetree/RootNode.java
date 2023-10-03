@@ -2,7 +2,9 @@ package filetree;
 
 import javax.swing.tree.TreeNode;
 import java.io.File;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Enumeration;
 
 public class RootNode implements TreeNode {
 

@@ -133,4 +133,13 @@ public class FileTreeNode implements TreeNode {
 
         return file.getAbsolutePath();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof FileTreeNode node)) {
+            return false;
+        }
+
+        return file.equals(node.file);
+    }
 }

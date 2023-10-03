@@ -7,6 +7,7 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class FileTreeModel implements TreeModel {
@@ -29,7 +30,6 @@ public class FileTreeModel implements TreeModel {
         return parentTreeNode.getChildAt(index);
     }
 
-
     @Override
     public int getChildCount(Object parent) {
         TreeNode parentTreeNode = (TreeNode) parent;
@@ -43,21 +43,40 @@ public class FileTreeModel implements TreeModel {
     }
 
     @Override
-    public void valueForPathChanged(TreePath path, Object newValue) {
-        String newName = (String) newValue;
-        FileTreeNode node = (FileTreeNode) path.getLastPathComponent();
-        if (node.rename(newName)) {
-            for (TreeModelListener listener : listeners) {
-                listener.treeNodesChanged(new TreeModelEvent(node, path));
-            }
-        }
-    }
-
-    @Override
     public int getIndexOfChild(Object parent, Object child) {
         TreeNode parentTreeNode = (TreeNode) parent;
         TreeNode treeNode = (TreeNode) child;
         return parentTreeNode.getIndex(treeNode);
+    }
+
+    @Override
+    public void valueForPathChanged(TreePath path, Object newValue) {
+        String newName = (String) newValue;
+        FileTreeNode node = (FileTreeNode) path.getLastPathComponent();
+        if (node.rename(newName)) {
+            notifyAllNodeChanged(new TreeModelEvent(node, path));
+        }
+    }
+
+    public void refreshPath(TreePath path) {
+        FileTreeNode node = (FileTreeNode) path.getLastPathComponent();
+        node.lazyLoadChildren();
+        // TODO: figure out, what should be the proper 'source' of this event
+        // tbh. I don't even know why the API even bothers
+        // in the javadoc, it says it's typical to set it to 'this', but frankly it's very smelly to me
+        notifyAllStructureChanged(new TreeModelEvent(this, path));
+    }
+
+    private void notifyAllNodeChanged(TreeModelEvent e) {
+        for (TreeModelListener listener : listeners) {
+            listener.treeNodesChanged(e);
+        }
+    }
+
+    private void notifyAllStructureChanged(TreeModelEvent e) {
+        for (TreeModelListener listener : listeners) {
+            listener.treeStructureChanged(e);
+        }
     }
 
     @Override
