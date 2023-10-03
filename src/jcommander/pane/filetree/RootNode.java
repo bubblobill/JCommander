@@ -1,4 +1,4 @@
-package filetree;
+package jcommander.pane.filetree;
 
 import javax.swing.tree.TreeNode;
 import java.io.File;
@@ -15,10 +15,7 @@ public class RootNode implements TreeNode {
         mountPointNodes = new FileTreeNode[mountPoints.length];
 
         for (int i = 0; i < mountPoints.length; i++) {
-            FileTreeNode mountPointNode = new FileTreeNode(mountPoints[i]);
-            mountPointNode.lazyLoadChildren();
-
-            mountPointNodes[i] = mountPointNode;
+            mountPointNodes[i] = new FileTreeNode(mountPoints[i]);
         }
     }
 

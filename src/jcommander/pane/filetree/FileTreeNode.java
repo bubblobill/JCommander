@@ -1,26 +1,27 @@
-package filetree;
+package jcommander.pane.filetree;
 
 import javax.swing.tree.TreeNode;
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class FileTreeNode implements TreeNode {
 
-    private FileTreeNode parent;
+    private final FileTreeNode parent;
     private List<FileTreeNode> children = null;
     private File file;
 
-    public FileTreeNode(File descriptor, FileTreeNode parent) {
-        if (descriptor == null) {
+    public FileTreeNode(File file, FileTreeNode parent) {
+        if (file == null) {
             throw new IllegalArgumentException("Descriptor shall not be null.");
         }
 
         this.parent = parent;
-        this.file = descriptor;
+        this.file = file;
     }
 
-    public FileTreeNode(File descriptor) {
-        this(descriptor, null);
+    public FileTreeNode(File file) {
+        this(file, null);
     }
 
     public boolean rename(String newName) {
@@ -34,21 +35,6 @@ public class FileTreeNode implements TreeNode {
             return true;
         }
         return false;
-    }
-
-    public void reparent(FileTreeNode newParent) {
-        if (parent != null) {
-            parent.removeChild(this);
-        }
-        newParent.addChild(this);
-    }
-
-    public void addChild(FileTreeNode fileTreeNode) {
-        children.add(fileTreeNode);
-    }
-
-    public void removeChild(FileTreeNode fileTreeNode) {
-        children.remove(fileTreeNode);
     }
 
     public void lazyLoadChildren() {
@@ -70,6 +56,10 @@ public class FileTreeNode implements TreeNode {
             return;
         }
 
+//        :))))
+//        children = Arrays.asList(filesInDirectory).stream()
+//                .map(f -> new FileTreeNode(f, this))
+//                .collect(Collectors.toList());
         for (File file : filesInDirectory) {
             children.add(new FileTreeNode(file, this));
         }
