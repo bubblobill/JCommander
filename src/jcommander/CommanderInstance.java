@@ -51,8 +51,8 @@ public class CommanderInstance {
         JButton refresh = new JButton();
         refresh.setIcon(getSquareIcon("refresh.png"));
         refresh.addActionListener(e -> {
-            paneA.refreshTree();
-            paneB.refreshTree();
+            paneA.refresh();
+            paneB.refresh();
         });
         topBar.add(refresh);
         JButton find = new JButton();

@@ -10,12 +10,8 @@ import java.util.List;
 
 public class FileTreeModel implements TreeModel {
 
-    private final RootNode rootNode;
+    private final RootNode rootNode = new RootNode();
     private final List<TreeModelListener> listeners = new ArrayList<>();
-
-    public FileTreeModel() {
-        rootNode = new RootNode();
-    }
 
     @Override
     public Object getRoot() {
@@ -62,7 +58,7 @@ public class FileTreeModel implements TreeModel {
         // TODO: figure out, what should be the proper 'source' of this event
         // tbh. I don't even know why the API even bothers
         // in the javadoc, it says it's typical to set it to 'this', but frankly it's very smelly to me
-        notifyAllStructureChanged(new TreeModelEvent(this, path));
+        //notifyAllStructureChanged(new TreeModelEvent(this, path));
     }
 
     private void notifyAllNodeChanged(TreeModelEvent e) {

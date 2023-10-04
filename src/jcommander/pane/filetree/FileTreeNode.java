@@ -2,8 +2,10 @@ package jcommander.pane.filetree;
 
 import javax.swing.tree.TreeNode;
 import java.io.File;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
 
 public class FileTreeNode implements TreeNode {
 
@@ -22,6 +24,10 @@ public class FileTreeNode implements TreeNode {
 
     public FileTreeNode(File file) {
         this(file, null);
+    }
+
+    public File getFile() {
+        return file;
     }
 
     public boolean rename(String newName) {
