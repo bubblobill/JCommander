@@ -10,43 +10,38 @@ import java.util.List;
 
 public class DirectoryListModel implements ListModel<File> {
 
-    File directory;
+    // null-check avoidance + optimization technique:
+    //  - in order to avoid null-checks in @see getSize() and @see getElementAt(),
+    //    we maintain a steady, never-null list for the current directory's content;
+    //    thus even if for a given directory we can't list out its contents, we
+    //    propagate an empty collection of items instead of admitting the nullity
+    //  - a zero-length array can be shared across multiple instances, as there's
+    //    nothing to be shared there, except for the final *length* field;
+    //    therefore we can hold onto only one concrete zero-length array all-along
+    //    which should result in less allocation
+    private static final File[] defaultZeroList = new File[0];
 
-    File[] listOfFiles;
+    File[] listOfFiles = DirectoryListModel.defaultZeroList;
     private final List<ListDataListener> listeners = new ArrayList<>();
 
-    public DirectoryListModel(File directory) {
+
+    public void listDirectory(File directory) {
         if (!directory.isDirectory()) {
             throw new InvalidParameterException("Parameter must be a directory");
         }
 
-        this.directory = directory;
-        refreshDirectoryContent();
-    }
-
-    public File getDirectory() {
-        return directory;
-    }
-
-    public void setDirectory(File directory) {
-        this.directory = directory;
-        refreshDirectoryContent();
-    }
-
-    public void refreshDirectoryContent() {
         listOfFiles = directory.listFiles();
         if (listOfFiles == null) {
-            listOfFiles = new File[0];
+            listOfFiles = defaultZeroList;
         }
 
         notifyAllDirectoryChanged();
     }
 
     private void notifyAllDirectoryChanged() {
-        ListDataEvent e = new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED,
-                0, listOfFiles.length);
+        ListDataEvent e = new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, listOfFiles.length);
         for (ListDataListener listener : listeners) {
-                listener.contentsChanged(e);
+            listener.contentsChanged(e);
         }
     }
 
