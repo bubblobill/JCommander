@@ -4,6 +4,7 @@ import jcommander.pane.directorylist.DirectoryListModel;
 import jcommander.pane.directorylist.FileCellRenderer;
 import jcommander.pane.filetree.FileTreeModel;
 import jcommander.pane.filetree.FileTreeNode;
+import jcommander.pane.model.WorkingDirectory;
 
 import javax.swing.*;
 import javax.swing.tree.TreeNode;
@@ -15,15 +16,13 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 import java.util.regex.Pattern;
+
+import static jcommander.ResourceFactory.getIcon;
 
 public class WorkPane extends JComponent {
 
-    private File workingDirectory;
-
-    private final Stack<String> undoHistory = new Stack<>();
-    private final Stack<String> redoHistory = new Stack<>();
+    private final WorkingDirectory wd = new WorkingDirectory();
 
     private final JTextField pathField;
 
@@ -37,16 +36,31 @@ public class WorkPane extends JComponent {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
 
+        JToolBar pathBar = new JToolBar();
+        pathBar.setFloatable(false);
+
+        JButton parentFolderButton = new JButton(getIcon("up.png")); // there could be an optional size parameter
+        parentFolderButton.addActionListener(e -> wd.selectParent());
+        pathBar.add(parentFolderButton);
+
         pathField = new JTextField(32);
         pathField.addActionListener(e -> {
-            File validatorFile = new File(pathField.getText());
-            if (validatorFile.exists() && validatorFile.isDirectory()) {
-                changeWorkingDirectory(validatorFile);
+            String suggestedPath = pathField.getText();
+            if (suggestedPath.isBlank()) {
+                wd.set(null);
             } else {
-                refreshTextBox();
+                File validatorFile = new File(suggestedPath);
+                if (validatorFile.exists() && validatorFile.isDirectory()) {
+                    wd.set(validatorFile);
+                } else {
+                    refreshTextBox();
+                }
             }
         });
-        panel.add(pathField, BorderLayout.NORTH);
+        pathField.setFont(new Font("Sans Serif", Font.PLAIN, 20));
+        pathBar.add(pathField);
+
+        panel.add(pathBar, BorderLayout.NORTH);
 
         fileSystemModel = new FileTreeModel();
         tree = new JTree();
@@ -56,9 +70,12 @@ public class WorkPane extends JComponent {
         tree.setScrollsOnExpand(true);
         tree.setExpandsSelectedPaths(true);
         tree.addTreeSelectionListener(e -> {
-            FileTreeNode node = (FileTreeNode) e.getPath().getLastPathComponent();
-            if (!node.isLeaf()) {
-                changeWorkingDirectory(node.getFile());
+            TreeNode node = (TreeNode) e.getPath().getLastPathComponent();
+            if (node == fileSystemModel.getRoot()) {
+                wd.set(null);
+            } else if (!node.isLeaf()) {
+                FileTreeNode fileTreeNode = (FileTreeNode) node;
+                wd.set(fileTreeNode.getFile());
             }
         });
 
@@ -78,7 +95,7 @@ public class WorkPane extends JComponent {
 
                     File file = directoryModel.getElementAt(index);
                     if (file.isDirectory()) {
-                        changeWorkingDirectory(file);
+                        wd.set(file);
                     }
                 }
             }
@@ -90,19 +107,11 @@ public class WorkPane extends JComponent {
 
         add(panel);
 
+        wd.addDirectoryChangeListener(e -> refresh());
+        wd.set(null);
+
         setLayout(new FlowLayout());
         setPreferredSize(panel.getPreferredSize());
-    }
-
-    public void changeWorkingDirectory(File workingDirectory) {
-        redoHistory.clear();
-        undoHistory.push(this.workingDirectory.getAbsolutePath());
-        setWorkingDirectory(workingDirectory);
-    }
-
-    private void setWorkingDirectory(File workingDirectory) {
-        this.workingDirectory = workingDirectory;
-        refresh();
     }
 
     public void refresh() {
@@ -112,13 +121,17 @@ public class WorkPane extends JComponent {
     }
 
     private void refreshTextBox() {
-        pathField.setText(workingDirectory.getAbsolutePath());
+        pathField.setText(wd.getAbsolutePath());
     }
 
     private void refreshTree() {
-        List<TreeNode> path = new ArrayList<>();
+        if (wd.isRoot()) {
+            return;
+        }
+
         TreeNode leaf = (TreeNode) fileSystemModel.getRoot();
-        for (String label : pseudoPathFromString(workingDirectory.getAbsolutePath())) {
+        List<TreeNode> path = new ArrayList<>();
+        for (String label : pseudoPathFromString(wd.getAbsolutePath())) {
             for (int idx = 0; idx < leaf.getChildCount(); idx++) {
                 FileTreeNode child = (FileTreeNode) leaf.getChildAt(idx);
                 if (child.toString().equals(label)) { // TODO: Law of Demeter
@@ -127,8 +140,9 @@ public class WorkPane extends JComponent {
                 }
             }
         }
+
         TreePath treePath = new TreePath(path.toArray());
-        fileSystemModel.refreshPath(treePath);
+        //fileSystemModel.refreshPath(treePath);
         tree.expandPath(treePath); // this does not work as of now
     }
 
@@ -146,18 +160,15 @@ public class WorkPane extends JComponent {
     }
 
     private void refreshList() {
-        directoryModel.listDirectory(workingDirectory);
+        list.clearSelection();
+        directoryModel.listDirectory(wd.list());
     }
 
     public void selectPrevious() {
-        String url = undoHistory.pop();
-        redoHistory.push(url);
-        setWorkingDirectory(new File(url));
+        wd.selectPrevious();
     }
 
     public void selectNext() {
-        String url = redoHistory.pop();
-        undoHistory.push(url);
-        setWorkingDirectory(new File(url));
+        wd.selectNext();
     }
 }
