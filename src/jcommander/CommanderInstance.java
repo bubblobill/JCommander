@@ -5,7 +5,7 @@ import jcommander.pane.WorkPane;
 import javax.swing.*;
 import java.awt.*;
 
-import static jcommander.ResourceFactory.getSquareIcon;
+import static jcommander.ResourceFactory.getIcon;
 
 public class CommanderInstance {
 
@@ -17,7 +17,7 @@ public class CommanderInstance {
     public CommanderInstance() {
         frame = new JFrame("JCommander");
         frame.setResizable(false);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
 
         createMenuBar();
@@ -46,39 +46,39 @@ public class CommanderInstance {
     }
 
     private void createTopBar(Container container) {
-        JToolBar topBar = new JToolBar(JToolBar.HORIZONTAL);
+        JToolBar topBar = new JToolBar(SwingConstants.HORIZONTAL);
         topBar.setFloatable(false);
         JButton refresh = new JButton();
-        refresh.setIcon(getSquareIcon("refresh.png"));
+        refresh.setIcon(getIcon("refresh.png"));
         refresh.addActionListener(e -> {
             paneA.refresh();
             paneB.refresh();
         });
         topBar.add(refresh);
         JButton find = new JButton();
-        find.setIcon(getSquareIcon("find.png"));
+        find.setIcon(getIcon("find.png"));
         find.addActionListener(e -> openFindDialog());
         topBar.add(find);
         JButton previous = new JButton();
-        previous.setIcon(getSquareIcon("left.png"));
+        previous.setIcon(getIcon("left.png"));
         previous.addActionListener(e -> activePane.selectPrevious());
         topBar.add(previous);
         JButton next = new JButton();
-        next.setIcon(getSquareIcon("right.png"));
+        next.setIcon(getIcon("right.png"));
         next.addActionListener(e -> activePane.selectNext());
         topBar.add(next);
         container.add(topBar, BorderLayout.NORTH);
     }
 
     private void createCenterBar(Container container) {
-        JToolBar centerBar = new JToolBar(JToolBar.VERTICAL);
+        JToolBar centerBar = new JToolBar(SwingConstants.VERTICAL);
         centerBar.setFloatable(false);
         JButton copy = new JButton();
-        copy.setIcon(getSquareIcon("copy.png"));
+        copy.setIcon(getIcon("copy.png"));
         copy.addActionListener(e -> issueCopyOperation());
         centerBar.add(copy);
         JButton move = new JButton();
-        move.setIcon(getSquareIcon("move.png"));
+        move.setIcon(getIcon("move.png"));
         move.addActionListener(e -> issueMoveOperation());
         centerBar.add(move);
         container.add(centerBar, BorderLayout.CENTER);
