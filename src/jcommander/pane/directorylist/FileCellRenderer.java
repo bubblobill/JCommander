@@ -2,11 +2,9 @@ package jcommander.pane.directorylist;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.File;
 
-import static jcommander.ResourceFactory.getSquareIcon;
+import static jcommander.ResourceFactory.getIcon;
 
 public class FileCellRenderer implements ListCellRenderer<File> {
 
@@ -15,14 +13,20 @@ public class FileCellRenderer implements ListCellRenderer<File> {
     @Override
     public Component getListCellRendererComponent(JList<? extends File> list, File file, int index, boolean isSelected, boolean cellHasFocus) {
         JLabel cell = (JLabel) defaultRenderer.getListCellRendererComponent(list, file, index, isSelected, cellHasFocus);
-        cell.setText(file.getName());
 
-        if (file.isFile()) {
-            cell.setIcon(getSquareIcon("file.png"));
-            cell.setForeground(Color.BLACK);
+        if (file.getParentFile() == null) { // if it represents a mount point
+            cell.setText(file.getAbsolutePath());
+            cell.setIcon(getIcon("disk.png"));
         } else {
-            cell.setIcon(getSquareIcon("directory.png"));
-            cell.setForeground(Color.BLUE);
+            cell.setText(file.getName());
+
+            if (file.isFile()) {
+                cell.setIcon(getIcon("file.png"));
+                cell.setForeground(Color.BLACK);
+            } else {
+                cell.setIcon(getIcon("directory.png"));
+                cell.setForeground(Color.BLUE);
+            }
         }
 
         return cell;
