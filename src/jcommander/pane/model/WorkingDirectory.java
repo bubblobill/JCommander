@@ -1,52 +1,45 @@
 package jcommander.pane.model;
 
+import jcommander.history.HistoryChangeListener;
+import jcommander.history.TrackedObject;
+
+import javax.swing.event.ChangeListener;
 import java.io.File;
-import java.util.*;
 
 public class WorkingDirectory {
 
-    private File directory = null;
-
-    private final Deque<String> undoHistory = new ArrayDeque<>();
-    private final Deque<String> redoHistory = new ArrayDeque<>();
-
-    private final List<DirectoryChangeListener> listeners = new ArrayList<>();
+    private final TrackedObject<File> trackedDirectory = new TrackedObject<>(null);
 
     public void set(File directory) {
-        redoHistory.clear();
-        undoHistory.push(getAbsolutePath());
-        setAndNotify(directory);
+        trackedDirectory.set(directory);
     }
 
-    private void setAndNotify(File directory) {
-        this.directory = directory;
-        notifyAllWorkingDirectoryChanged(new DirectoryChangedEvent(this));
+    public void addChangeListener(ChangeListener l) {
+        trackedDirectory.addChangeListener(l);
     }
 
-    private void notifyAllWorkingDirectoryChanged(DirectoryChangedEvent e) {
-        for (DirectoryChangeListener listener : listeners) {
-            listener.directoryChanged(e);
-        }
+    public void removeChangeListener(ChangeListener l) {
+        trackedDirectory.removeChangeListener(l);
     }
 
-    public void addDirectoryChangeListener(DirectoryChangeListener l) {
-        listeners.add(l);
+    public void addHistoryChangeListener(HistoryChangeListener<File> l) {
+        trackedDirectory.addHistoryChangeListener(l);
     }
 
-    public void removeDirectoryChangeListener(DirectoryChangeListener l) {
-        listeners.remove(l);
+    public void removeHistoryChangeListener(HistoryChangeListener<File> l) {
+        trackedDirectory.removeHistoryChangeListener(l);
     }
 
     // this is awfully bad
     public boolean isRoot() {
-        return directory == null;
+        return trackedDirectory.get() == null;
     }
 
     public File[] list() {
         if (isRoot()) { // root has the mount points as its directories
             return File.listRoots();
         }
-        File[] files = directory.listFiles();
+        File[] files = trackedDirectory.get().listFiles();
         if (files == null) {
             return new File[0];
         }
@@ -57,14 +50,14 @@ public class WorkingDirectory {
         if (isRoot()) { // root's path is an empty string
             return "";
         }
-        return directory.getAbsolutePath();
+        return trackedDirectory.get().getAbsolutePath();
     }
 
     public void selectParent() {
         if (isRoot()) { // root does not have a parent directory
             return;
         }
-        set(directory.getParentFile());
+        set(trackedDirectory.get().getParentFile());
     }
 
     // See the repeating pattern?
@@ -74,15 +67,11 @@ public class WorkingDirectory {
     //     otherwiseDo();
 
     public void selectPrevious() {
-        String path = undoHistory.pop();
-        redoHistory.push(path);
-        setAndNotify(createFileFromStringPath(path));
+        trackedDirectory.undo();
     }
 
     public void selectNext() {
-        String path = redoHistory.pop();
-        undoHistory.push(path);
-        setAndNotify(createFileFromStringPath(path));
+        trackedDirectory.redo();
     }
 
     // This is unrelated. Why is it here?

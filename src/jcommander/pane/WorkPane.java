@@ -1,5 +1,6 @@
 package jcommander.pane;
 
+import jcommander.history.HistoryChangeListener;
 import jcommander.pane.directorylist.DirectoryListModel;
 import jcommander.pane.directorylist.FileCellRenderer;
 import jcommander.pane.filetree.FileTreeModel;
@@ -107,7 +108,7 @@ public class WorkPane extends JComponent {
 
         add(panel);
 
-        wd.addDirectoryChangeListener(e -> refresh());
+        wd.addChangeListener(e -> refresh());
         wd.set(null);
 
         setLayout(new FlowLayout());
@@ -170,5 +171,13 @@ public class WorkPane extends JComponent {
 
     public void selectNext() {
         wd.selectNext();
+    }
+
+    public void addHistoryChangeListener(HistoryChangeListener<File> l) {
+        wd.addHistoryChangeListener(l);
+    }
+
+    public void removeHistoryChangeListener(HistoryChangeListener<File> l) {
+        wd.removeHistoryChangeListener(l);
     }
 }

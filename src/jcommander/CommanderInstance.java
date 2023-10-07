@@ -13,6 +13,8 @@ public class CommanderInstance {
     private WorkPane activePane;
     private final WorkPane paneA;
     private final WorkPane paneB;
+    private JButton previous;
+    private JButton next;
 
     public CommanderInstance() {
         frame = new JFrame("JCommander");
@@ -24,17 +26,34 @@ public class CommanderInstance {
         createTopBar(frame);
 
         paneA = new WorkPane();
+        paneA.addHistoryChangeListener(e -> {
+            if (activePane == paneA) {
+                updateHistoryButtons(e.canUndo(), e.canRedo());
+            }
+        });
         frame.add(paneA, BorderLayout.WEST);
 
         createCenterBar(frame);
 
         paneB = new WorkPane();
+        paneB.addHistoryChangeListener(e -> {
+            if (activePane == paneA) {
+                updateHistoryButtons(e.canUndo(), e.canRedo());
+            }
+        });
         frame.add(paneB, BorderLayout.EAST);
 
         activePane = paneA; // by default, paneA is in focus
 
+        updateHistoryButtons(false, false);
+
         frame.pack();
         frame.setVisible(true);
+    }
+
+    private void updateHistoryButtons(boolean undo, boolean redo) {
+        previous.setEnabled(undo);
+        next.setEnabled(redo);
     }
 
     private void createMenuBar() {
@@ -59,11 +78,11 @@ public class CommanderInstance {
         find.setIcon(getIcon("find.png"));
         find.addActionListener(e -> openFindDialog());
         topBar.add(find);
-        JButton previous = new JButton();
+        previous = new JButton();
         previous.setIcon(getIcon("left.png"));
         previous.addActionListener(e -> activePane.selectPrevious());
         topBar.add(previous);
-        JButton next = new JButton();
+        next = new JButton();
         next.setIcon(getIcon("right.png"));
         next.addActionListener(e -> activePane.selectNext());
         topBar.add(next);

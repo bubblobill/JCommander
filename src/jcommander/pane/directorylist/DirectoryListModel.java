@@ -9,7 +9,7 @@ import java.util.List;
 
 public class DirectoryListModel implements ListModel<File> {
 
-    private File[] files;
+    private File[] files = new File[0];
     private final List<ListDataListener> listeners = new ArrayList<>();
 
     public void listDirectory(File[] files) {
