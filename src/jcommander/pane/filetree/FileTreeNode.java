@@ -26,10 +26,6 @@ public class FileTreeNode implements TreeNode {
         this(file, null);
     }
 
-    public File getFile() {
-        return file;
-    }
-
     public boolean rename(String newName) {
         File newFile = new File(file.getParent(), newName);
         if (!newFile.getParent().equals(file.getParent())) {
@@ -62,10 +58,6 @@ public class FileTreeNode implements TreeNode {
             return;
         }
 
-//        :))))
-//        children = Arrays.asList(filesInDirectory).stream()
-//                .map(f -> new FileTreeNode(f, this))
-//                .collect(Collectors.toList());
         for (File file : filesInDirectory) {
             children.add(new FileTreeNode(file, this));
         }
@@ -103,7 +95,7 @@ public class FileTreeNode implements TreeNode {
 
     @Override
     public int getIndex(TreeNode node) {
-        return children.indexOf((FileTreeNode) node);
+        return children.indexOf(node);
     }
 
     @Override
@@ -137,5 +129,9 @@ public class FileTreeNode implements TreeNode {
         }
 
         return file.equals(node.file);
+    }
+
+    public File getFile() {
+        return file;
     }
 }

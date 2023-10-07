@@ -55,10 +55,7 @@ public class FileTreeModel implements TreeModel {
     public void refreshPath(TreePath path) {
         FileTreeNode node = (FileTreeNode) path.getLastPathComponent();
         node.lazyLoadChildren();
-        // TODO: figure out, what should be the proper 'source' of this event
-        // tbh. I don't even know why the API even bothers
-        // in the javadoc, it says it's typical to set it to 'this', but frankly it's very smelly to me
-        //notifyAllStructureChanged(new TreeModelEvent(this, path));
+        notifyAllStructureChanged(new TreeModelEvent(this, path));
     }
 
     private void notifyAllNodeChanged(TreeModelEvent e) {

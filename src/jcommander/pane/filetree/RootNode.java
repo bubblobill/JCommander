@@ -36,7 +36,7 @@ public class RootNode implements TreeNode {
 
     @Override
     public int getIndex(TreeNode node) {
-        return Arrays.asList(mountPointNodes).indexOf((FileTreeNode) node);
+        return Arrays.asList(mountPointNodes).indexOf(node);
     }
 
     @Override
