@@ -25,6 +25,7 @@ public class WorkPane extends JComponent {
 
     private final WorkingDirectory wd = new WorkingDirectory();
 
+    private final JButton parentFolderButton;
     private final JTextField pathField;
 
     private final FileTreeModel fileSystemModel;
@@ -37,10 +38,10 @@ public class WorkPane extends JComponent {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
 
+        parentFolderButton = new JButton(getIcon("up.png")); // there could be an optional size parameter
         JToolBar pathBar = new JToolBar();
         pathBar.setFloatable(false);
 
-        JButton parentFolderButton = new JButton(getIcon("up.png")); // there could be an optional size parameter
         parentFolderButton.addActionListener(e -> wd.selectParent());
         pathBar.add(parentFolderButton);
 
@@ -116,9 +117,14 @@ public class WorkPane extends JComponent {
     }
 
     public void refresh() {
+        refreshParentFolderButton();
         refreshTextBox();
         refreshTree();
         refreshList();
+    }
+
+    private void refreshParentFolderButton() {
+        parentFolderButton.setEnabled(!wd.isRoot());
     }
 
     private void refreshTextBox() {
