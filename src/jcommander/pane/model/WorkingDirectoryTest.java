@@ -8,7 +8,9 @@ import java.io.File;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class WorkingDirectoryTest {
+
     private WorkingDirectory wd;
+
     @BeforeEach
     public void setUp() {
         wd = new WorkingDirectory();
