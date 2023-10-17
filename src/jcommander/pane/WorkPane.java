@@ -1,10 +1,13 @@
 package jcommander.pane;
 
+import jcommander.filesystem.handle.FileHandleBuilder;
+import jcommander.filesystem.handle.Handle;
+import jcommander.filesystem.handle.RootHandle;
 import jcommander.history.HistoryChangeListener;
 import jcommander.pane.directorylist.DirectoryListModel;
 import jcommander.pane.directorylist.FileCellRenderer;
+import jcommander.pane.filetree.FileNode;
 import jcommander.pane.filetree.FileTreeModel;
-import jcommander.pane.filetree.FileTreeNode;
 import jcommander.pane.model.WorkingDirectory;
 
 import javax.swing.*;
@@ -53,7 +56,7 @@ public class WorkPane extends JComponent {
             } else {
                 File validatorFile = new File(suggestedPath);
                 if (validatorFile.exists() && validatorFile.isDirectory()) {
-                    wd.set(validatorFile);
+                    wd.set(new FileHandleBuilder(validatorFile).toFileHandle());
                 } else {
                     refreshTextBox();
                 }
@@ -76,8 +79,8 @@ public class WorkPane extends JComponent {
             if (node == fileSystemModel.getRoot()) {
                 wd.set(null);
             } else if (!node.isLeaf()) {
-                FileTreeNode fileTreeNode = (FileTreeNode) node;
-                wd.set(fileTreeNode.getFile());
+                FileNode fileNode = (FileNode) node;
+                wd.set(fileNode.getFile());
             }
         });
 
@@ -97,7 +100,7 @@ public class WorkPane extends JComponent {
 
                     File file = directoryModel.getElementAt(index);
                     if (file.isDirectory()) {
-                        wd.set(file);
+                        wd.set(new FileHandleBuilder(file).toFileHandle());
                     }
                 }
             }
@@ -110,10 +113,23 @@ public class WorkPane extends JComponent {
         add(panel);
 
         wd.addChangeListener(e -> refresh());
-        wd.set(null);
+        wd.set(new RootHandle());
 
         setLayout(new FlowLayout());
         setPreferredSize(panel.getPreferredSize());
+    }
+
+    private static String[] pseudoPathFromString(String absolutePath) {
+        String[] path = absolutePath.split(Pattern.quote(File.separator));
+
+        if (path.length > 0) {
+            // On Windows, this is to add a backslash to the drive's label (e.g.: "C:\").
+            // On Linux, we can pretend that Linux's root is [empty string] + backslash, so together they form "/".
+            // Thus, fortunately this method works fine on all platforms.
+            path[0] += File.separator;
+        }
+
+        return path;
     }
 
     public void refresh() {
@@ -140,7 +156,7 @@ public class WorkPane extends JComponent {
         List<TreeNode> path = new ArrayList<>();
         for (String label : pseudoPathFromString(wd.getAbsolutePath())) {
             for (int idx = 0; idx < leaf.getChildCount(); idx++) {
-                FileTreeNode child = (FileTreeNode) leaf.getChildAt(idx);
+                FileNode child = (FileNode) leaf.getChildAt(idx);
                 if (child.toString().equals(label)) { // TODO: Law of Demeter
                     path.add(child);
                     break;
@@ -151,19 +167,6 @@ public class WorkPane extends JComponent {
         TreePath treePath = new TreePath(path.toArray());
         //fileSystemModel.refreshPath(treePath);
         tree.expandPath(treePath); // this does not work as of now
-    }
-
-    private static String[] pseudoPathFromString(String absolutePath) {
-        String[] path = absolutePath.split(Pattern.quote(File.separator));
-
-        if (path.length > 0) {
-            // On Windows, this is to add a backslash to the drive's label (e.g.: "C:\").
-            // On Linux, we can pretend that Linux's root is [empty string] + backslash, so together they form "/".
-            // Thus, fortunately this method works fine on all platforms.
-            path[0] += File.separator;
-        }
-
-        return path;
     }
 
     private void refreshList() {
@@ -179,11 +182,11 @@ public class WorkPane extends JComponent {
         wd.selectNext();
     }
 
-    public void addHistoryChangeListener(HistoryChangeListener<File> l) {
+    public void addHistoryChangeListener(HistoryChangeListener<Handle> l) {
         wd.addHistoryChangeListener(l);
     }
 
-    public void removeHistoryChangeListener(HistoryChangeListener<File> l) {
+    public void removeHistoryChangeListener(HistoryChangeListener<Handle> l) {
         wd.removeHistoryChangeListener(l);
     }
 }

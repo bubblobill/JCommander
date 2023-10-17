@@ -1,5 +1,6 @@
 package jcommander.pane.model;
 
+import jcommander.filesystem.handle.Handle;
 import jcommander.history.HistoryChangeListener;
 import jcommander.history.TrackedObject;
 
@@ -8,9 +9,9 @@ import java.io.File;
 
 public class WorkingDirectory {
 
-    private final TrackedObject<File> trackedDirectory = new TrackedObject<>(null);
+    private final TrackedObject<Handle> trackedDirectory = new TrackedObject<>(null);
 
-    public void set(File directory) {
+    public void set(Handle directory) {
         trackedDirectory.set(directory);
     }
 
@@ -22,49 +23,25 @@ public class WorkingDirectory {
         trackedDirectory.removeChangeListener(l);
     }
 
-    public void addHistoryChangeListener(HistoryChangeListener<File> l) {
+    public void addHistoryChangeListener(HistoryChangeListener<Handle> l) {
         trackedDirectory.addHistoryChangeListener(l);
     }
 
-    public void removeHistoryChangeListener(HistoryChangeListener<File> l) {
+    public void removeHistoryChangeListener(HistoryChangeListener<Handle> l) {
         trackedDirectory.removeHistoryChangeListener(l);
     }
 
-    // this is awfully bad
-    public boolean isRoot() {
-        return trackedDirectory.get() == null;
-    }
-
-    public File[] list() {
-        if (isRoot()) { // root has the mount points as its directories
-            return File.listRoots();
-        }
-        File[] files = trackedDirectory.get().listFiles();
-        if (files == null) {
-            return new File[0];
-        }
-        return files;
+    public Handle[] list() {
+        return trackedDirectory.get().getChildren();
     }
 
     public String getAbsolutePath() {
-        if (isRoot()) { // root's path is an empty string
-            return "";
-        }
         return trackedDirectory.get().getAbsolutePath();
     }
 
     public void selectParent() {
-        if (isRoot()) { // root does not have a parent directory
-            return;
-        }
-        set(trackedDirectory.get().getParentFile());
+        set(trackedDirectory.get().getParent());
     }
-
-    // See the repeating pattern?
-    // if (isRoot())
-    //     thenDo();
-    // else
-    //     otherwiseDo();
 
     public void selectPrevious() {
         trackedDirectory.undo();
@@ -72,13 +49,5 @@ public class WorkingDirectory {
 
     public void selectNext() {
         trackedDirectory.redo();
-    }
-
-    // This is unrelated. Why is it here?
-    private static File createFileFromStringPath(String url) {
-        if (url.isEmpty()) {
-            return null;
-        }
-        return new File(url);
     }
 }

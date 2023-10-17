@@ -1,5 +1,7 @@
 package jcommander.pane.filetree;
 
+import jcommander.filesystem.handle.RootHandle;
+
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
@@ -10,7 +12,7 @@ import java.util.List;
 
 public class FileTreeModel implements TreeModel {
 
-    private final RootNode rootNode = new RootNode();
+    private final RootNode rootNode = new RootNode(new RootHandle());
     private final List<TreeModelListener> listeners = new ArrayList<>();
 
     @Override
@@ -46,14 +48,14 @@ public class FileTreeModel implements TreeModel {
     @Override
     public void valueForPathChanged(TreePath path, Object newValue) {
         String newName = (String) newValue;
-        FileTreeNode node = (FileTreeNode) path.getLastPathComponent();
+        FileNode node = (FileNode) path.getLastPathComponent();
         if (node.rename(newName)) {
             notifyAllNodeChanged(new TreeModelEvent(node, path));
         }
     }
 
     public void refreshPath(TreePath path) {
-        FileTreeNode node = (FileTreeNode) path.getLastPathComponent();
+        FileNode node = (FileNode) path.getLastPathComponent();
         node.lazyLoadChildren();
         notifyAllStructureChanged(new TreeModelEvent(this, path));
     }
