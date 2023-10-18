@@ -1,8 +1,7 @@
 package jcommander.pane;
 
-import jcommander.filesystem.handle.FileHandleBuilder;
-import jcommander.filesystem.handle.Handle;
-import jcommander.filesystem.handle.RootHandle;
+import jcommander.filesystem.FileHandleBuilder;
+import jcommander.filesystem.Handle;
 import jcommander.history.HistoryChangeListener;
 import jcommander.pane.directorylist.DirectoryListModel;
 import jcommander.pane.directorylist.FileCellRenderer;
@@ -28,48 +27,84 @@ public class WorkPane extends JComponent {
 
     private final WorkingDirectory wd = new WorkingDirectory();
 
-    private final JButton parentFolderButton;
+    private final JButton parentButton;
     private final JTextField pathField;
 
     private final FileTreeModel fileSystemModel;
     private final JTree tree;
 
     private final DirectoryListModel directoryModel;
-    private final JList<File> list;
+    private final JList<Handle> list;
 
     public WorkPane() {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
 
-        parentFolderButton = new JButton(getIcon("up.png")); // there could be an optional size parameter
-        JToolBar pathBar = new JToolBar();
-        pathBar.setFloatable(false);
+        // TODO: decompose this one hell of a god-class in a similar manner how these blocks are structured
+        {
+            JToolBar pathBar = new JToolBar();
+            pathBar.setFloatable(false);
 
-        parentFolderButton.addActionListener(e -> wd.selectParent());
-        pathBar.add(parentFolderButton);
+            parentButton = new JButton(getIcon("up.png")); // there could be an optional size parameter
+            createParentButton();
+            pathBar.add(parentButton);
 
-        pathField = new JTextField(32);
+            pathField = new JTextField(32);
+            createPathField();
+            pathBar.add(pathField);
+
+            panel.add(pathBar, BorderLayout.NORTH);
+        }
+
+        {
+            {
+                fileSystemModel = new FileTreeModel();
+                tree = new JTree(fileSystemModel);
+                createFileSystemTree();
+            }
+
+            {
+                directoryModel = new DirectoryListModel();
+                list = new JList<>(directoryModel);
+                createDirectoryList();
+            }
+
+            JSplitPane views = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new JScrollPane(tree), new JScrollPane(list));
+
+            panel.add(views, BorderLayout.CENTER);
+        }
+
+        add(panel);
+
+        wd.addChangeListener(e -> refresh());
+        wd.resetToRoot();
+
+        setLayout(new FlowLayout());
+        setPreferredSize(panel.getPreferredSize());
+    }
+
+    private void createParentButton() {
+        parentButton.addActionListener(e -> wd.selectParent());
+    }
+
+    private void createPathField() {
         pathField.addActionListener(e -> {
             String suggestedPath = pathField.getText();
             if (suggestedPath.isBlank()) {
-                wd.set(null);
+                wd.resetToRoot();
             } else {
                 File validatorFile = new File(suggestedPath);
                 if (validatorFile.exists() && validatorFile.isDirectory()) {
-                    wd.set(new FileHandleBuilder(validatorFile).toFileHandle());
+                    wd.setTo(new FileHandleBuilder(validatorFile).toFileHandle());
                 } else {
                     refreshTextBox();
                 }
             }
         });
         pathField.setFont(new Font("Sans Serif", Font.PLAIN, 20));
-        pathBar.add(pathField);
+    }
 
-        panel.add(pathBar, BorderLayout.NORTH);
-
-        fileSystemModel = new FileTreeModel();
-        tree = new JTree();
-        tree.setModel(fileSystemModel);
+    private void createFileSystemTree() {
         tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         tree.setEditable(true);
         tree.setScrollsOnExpand(true);
@@ -77,15 +112,15 @@ public class WorkPane extends JComponent {
         tree.addTreeSelectionListener(e -> {
             TreeNode node = (TreeNode) e.getPath().getLastPathComponent();
             if (node == fileSystemModel.getRoot()) {
-                wd.set(null);
-            } else if (!node.isLeaf()) {
+                wd.resetToRoot();
+            } else {
                 FileNode fileNode = (FileNode) node;
-                wd.set(fileNode.getFile());
+                wd.setTo(fileNode.getFile()); // tries to set, and does nothing if handle is not a directory
             }
         });
+    }
 
-        directoryModel = new DirectoryListModel();
-        list = new JList<>(directoryModel);
+    private void createDirectoryList() {
         list.getSelectionModel().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         list.setCellRenderer(new FileCellRenderer());
         list.setDragEnabled(true);
@@ -98,25 +133,11 @@ public class WorkPane extends JComponent {
                         return;
                     }
 
-                    File file = directoryModel.getElementAt(index);
-                    if (file.isDirectory()) {
-                        wd.set(new FileHandleBuilder(file).toFileHandle());
-                    }
+                    Handle file = directoryModel.getElementAt(index);
+                    wd.setTo(file);
                 }
             }
         });
-
-        JSplitPane views = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new JScrollPane(tree), new JScrollPane(list));
-
-        panel.add(views, BorderLayout.CENTER);
-
-        add(panel);
-
-        wd.addChangeListener(e -> refresh());
-        wd.set(new RootHandle());
-
-        setLayout(new FlowLayout());
-        setPreferredSize(panel.getPreferredSize());
     }
 
     private static String[] pseudoPathFromString(String absolutePath) {
@@ -125,7 +146,7 @@ public class WorkPane extends JComponent {
         if (path.length > 0) {
             // On Windows, this is to add a backslash to the drive's label (e.g.: "C:\").
             // On Linux, we can pretend that Linux's root is [empty string] + backslash, so together they form "/".
-            // Thus, fortunately this method works fine on all platforms.
+            // Thus, this method works fine on all platforms.
             path[0] += File.separator;
         }
 
@@ -140,7 +161,7 @@ public class WorkPane extends JComponent {
     }
 
     private void refreshParentFolderButton() {
-        parentFolderButton.setEnabled(!wd.isRoot());
+        parentButton.setEnabled(!wd.isRoot());
     }
 
     private void refreshTextBox() {

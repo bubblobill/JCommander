@@ -1,4 +1,4 @@
-package jcommander.filesystem.handle;
+package jcommander.filesystem;
 
 import jcommander.ResourceFactory;
 

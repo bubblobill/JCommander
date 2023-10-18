@@ -9,6 +9,7 @@ import java.util.Stack;
 
 public class TrackedObject<T> {
 
+    private boolean hasBeenSet = false;
     private T object;
 
     private final Stack<T> undoHistory = new Stack<>();
@@ -24,7 +25,10 @@ public class TrackedObject<T> {
     public void set(T newObject) {
         if (!Objects.equals(object, newObject)) {
             redoHistory.clear();
-            undoHistory.push(object);
+            if (hasBeenSet) {
+                undoHistory.push(object);
+            }
+            hasBeenSet = true;
             notifyAllHistoryChanged(new HistoryChangedEvent<>(this, true, false));
             object = newObject;
         }

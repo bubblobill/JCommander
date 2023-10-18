@@ -1,4 +1,4 @@
-package jcommander.filesystem.handle;
+package jcommander.filesystem;
 
 import jcommander.ResourceFactory;
 
@@ -41,6 +41,11 @@ public class RootHandle implements Handle {
     @Override
     public Icon getAssociatedIcon() {
         return ResourceFactory.getIcon("computer.png");
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return false;
     }
 
     @Override

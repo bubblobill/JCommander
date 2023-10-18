@@ -1,17 +1,25 @@
 package jcommander.pane.model;
 
-import jcommander.filesystem.handle.Handle;
+import jcommander.filesystem.Handle;
+import jcommander.filesystem.RootHandle;
 import jcommander.history.HistoryChangeListener;
 import jcommander.history.TrackedObject;
 
 import javax.swing.event.ChangeListener;
-import java.io.File;
 
 public class WorkingDirectory {
 
     private final TrackedObject<Handle> trackedDirectory = new TrackedObject<>(null);
 
-    public void set(Handle directory) {
+    public void resetToRoot() {
+        trackedDirectory.set(new RootHandle());
+    }
+
+    public void setTo(Handle directory) {
+        if (directory.isLeaf()) {
+            return;
+        }
+
         trackedDirectory.set(directory);
     }
 
@@ -40,7 +48,7 @@ public class WorkingDirectory {
     }
 
     public void selectParent() {
-        set(trackedDirectory.get().getParent());
+        setTo(trackedDirectory.get().getParent());
     }
 
     public void selectPrevious() {
@@ -49,5 +57,9 @@ public class WorkingDirectory {
 
     public void selectNext() {
         trackedDirectory.redo();
+    }
+
+    public boolean isRoot() {
+        return trackedDirectory.get() instanceof RootHandle;
     }
 }

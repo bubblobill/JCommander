@@ -1,11 +1,10 @@
 package jcommander.pane.filetree;
 
-import jcommander.filesystem.handle.FileHandle;
-import jcommander.filesystem.handle.Handle;
-import jcommander.filesystem.handle.RootHandle;
+import jcommander.filesystem.FileHandle;
+import jcommander.filesystem.Handle;
+import jcommander.filesystem.RootHandle;
 
 import javax.swing.tree.TreeNode;
-import java.io.File;
 import java.util.*;
 
 public class RootNode implements TreeNode {
@@ -62,6 +61,6 @@ public class RootNode implements TreeNode {
 
     @Override
     public String toString() {
-        return "This PC";
+        return root.getName();
     }
 }

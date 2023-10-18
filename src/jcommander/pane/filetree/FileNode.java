@@ -1,8 +1,8 @@
 package jcommander.pane.filetree;
 
-import jcommander.filesystem.handle.FileHandle;
-import jcommander.filesystem.handle.Handle;
-import jcommander.filesystem.handle.RenamingException;
+import jcommander.filesystem.FileHandle;
+import jcommander.filesystem.Handle;
+import jcommander.filesystem.RenamingException;
 
 import javax.swing.tree.TreeNode;
 import java.util.ArrayList;

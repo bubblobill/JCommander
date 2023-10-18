@@ -1,18 +1,19 @@
 package jcommander.pane.directorylist;
 
+import jcommander.filesystem.Handle;
+
 import javax.swing.*;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DirectoryListModel implements ListModel<File> {
+public class DirectoryListModel implements ListModel<Handle> {
 
-    private File[] files = new File[0];
+    private Handle[] files = new Handle[0];
     private final List<ListDataListener> listeners = new ArrayList<>();
 
-    public void listDirectory(File[] files) {
+    public void listDirectory(Handle[] files) {
         this.files = files;
         notifyAllContentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, files.length));
     }
@@ -29,7 +30,7 @@ public class DirectoryListModel implements ListModel<File> {
     }
 
     @Override
-    public File getElementAt(int index) {
+    public Handle getElementAt(int index) {
         return files[index];
     }
 

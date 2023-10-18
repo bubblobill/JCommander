@@ -1,6 +1,6 @@
 package jcommander.pane.filetree;
 
-import jcommander.filesystem.handle.RootHandle;
+import jcommander.filesystem.RootHandle;
 
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
