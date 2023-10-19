@@ -2,24 +2,24 @@ package jcommander.pane;
 
 import jcommander.filesystem.Handle;
 import jcommander.history.HistoryChangeListener;
-import jcommander.pane.directorylist.DirectoryList;
+import jcommander.pane.directorylist.DirectoryListController;
 import jcommander.pane.filetree.FileTreeController;
 import jcommander.pane.model.WorkingDirectory;
-import jcommander.pane.path.ParentButton;
-import jcommander.pane.path.PathField;
+import jcommander.pane.path.ParentButtonController;
+import jcommander.pane.path.PathFieldController;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class WorkPane extends JComponent implements Refreshable {
+public class WorkPane extends JComponent {
 
     private final WorkingDirectory wd = new WorkingDirectory();
 
-    private final ParentButton parentButton;
-    private final PathField pathField;
+    private final Controller parentButton;
+    private final Controller pathField;
 
-    private final FileTreeController tree;
-    private final DirectoryList list;
+    private final Controller tree;
+    private final Controller list;
 
     public WorkPane() {
         JPanel panel = new JPanel();
@@ -28,16 +28,15 @@ public class WorkPane extends JComponent implements Refreshable {
         JToolBar pathBar = new JToolBar();
         pathBar.setFloatable(false);
 
-        parentButton = new ParentButton(wd);
-        pathBar.add(parentButton);
+        parentButton = new ParentButtonController(wd);
+        pathField = new PathFieldController(wd);
 
-        pathField = new PathField(wd);
-        pathBar.add(pathField);
-
+        pathBar.add(parentButton.component());
+        pathBar.add(pathField.component());
         panel.add(pathBar, BorderLayout.NORTH);
 
         tree = new FileTreeController(wd);
-        list = new DirectoryList(wd);
+        list = new DirectoryListController(wd);
 
         JSplitPane views = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
                 new JScrollPane(tree.component()), new JScrollPane(list.component()));
@@ -53,7 +52,6 @@ public class WorkPane extends JComponent implements Refreshable {
         setPreferredSize(panel.getPreferredSize());
     }
 
-    @Override
     public void refresh() {
         parentButton.refresh();
         pathField.refresh();

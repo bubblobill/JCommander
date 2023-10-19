@@ -1,23 +1,24 @@
 package jcommander.pane.path;
 
 import jcommander.filesystem.FileHandleBuilder;
-import jcommander.pane.Refreshable;
+import jcommander.pane.Controller;
 import jcommander.pane.model.WorkingDirectory;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 
-public class PathField extends JTextField implements Refreshable {
+public class PathFieldController implements Controller {
 
     private final WorkingDirectory wd;
+    private final JTextField textField;
 
-    public PathField(WorkingDirectory wd) {
-        super(32);
+    public PathFieldController(WorkingDirectory wd) {
         this.wd = wd;
+        textField = new JTextField(32);
 
-        addActionListener(e -> {
-            String suggestedPath = getText();
+        textField.addActionListener(e -> {
+            String suggestedPath = textField.getText();
             if (suggestedPath.isBlank()) {
                 wd.resetToRoot();
             } else {
@@ -30,11 +31,16 @@ public class PathField extends JTextField implements Refreshable {
             }
         });
 
-        setFont(new Font("Sans Serif", Font.PLAIN, 20));
+        textField.setFont(new Font("Sans Serif", Font.PLAIN, 20));
+    }
+
+    @Override
+    public JComponent component() {
+        return textField;
     }
 
     @Override
     public void refresh() {
-        setText(wd.getAbsolutePath());
+        textField.setText(wd.getAbsolutePath());
     }
 }

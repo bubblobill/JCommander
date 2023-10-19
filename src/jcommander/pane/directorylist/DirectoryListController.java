@@ -2,20 +2,19 @@ package jcommander.pane.directorylist;
 
 import jcommander.filesystem.Handle;
 import jcommander.pane.Controller;
-import jcommander.pane.Refreshable;
 import jcommander.pane.model.WorkingDirectory;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class DirectoryList implements Controller, Refreshable {
+public class DirectoryListController implements Controller {
 
     private final WorkingDirectory wd;
     private final DirectoryListModel directoryModel;
     private final JList<Handle> listView;
 
-    public DirectoryList(WorkingDirectory wd) {
+    public DirectoryListController(WorkingDirectory wd) {
         this.wd = wd;
 
         directoryModel = new DirectoryListModel();
@@ -33,7 +32,7 @@ public class DirectoryList implements Controller, Refreshable {
                     }
 
                     Handle file = directoryModel.getElementAt(index);
-                    DirectoryList.this.wd.setTo(file);
+                    DirectoryListController.this.wd.setTo(file);
                 }
             }
         });

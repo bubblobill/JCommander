@@ -1,7 +1,6 @@
 package jcommander.pane.filetree;
 
 import jcommander.pane.Controller;
-import jcommander.pane.Refreshable;
 import jcommander.pane.model.WorkingDirectory;
 
 import javax.swing.*;
@@ -13,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class FileTreeController implements Controller, Refreshable {
+public class FileTreeController implements Controller {
 
     private final WorkingDirectory wd;
     private final FileTreeModel fileSystemModel;
