@@ -10,9 +10,9 @@ import static jcommander.ResourceFactory.getIcon;
 public class CommanderInstance {
 
     private final JFrame frame;
-    private WorkPane activePane;
     private final WorkPane paneA;
     private final WorkPane paneB;
+    private WorkPane activePane;
     private JButton previous;
     private JButton next;
 

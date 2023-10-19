@@ -9,14 +9,12 @@ import java.util.Stack;
 
 public class TrackedObject<T> {
 
-    private boolean hasBeenSet = false;
-    private T object;
-
     private final Stack<T> undoHistory = new Stack<>();
     private final Stack<T> redoHistory = new Stack<>();
-
     private final List<ChangeListener> objectChangeListeners = new ArrayList<>();
     private final List<HistoryChangeListener<T>> historyChangeListeners = new ArrayList<>();
+    private boolean hasBeenSet = false;
+    private T object;
 
     public TrackedObject(T object) {
         this.object = object;

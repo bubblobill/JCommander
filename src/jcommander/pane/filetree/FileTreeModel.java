@@ -39,6 +39,15 @@ public class FileTreeModel implements TreeModel {
     }
 
     @Override
+    public void valueForPathChanged(TreePath path, Object newValue) {
+        String newName = (String) newValue;
+        FileNode node = (FileNode) path.getLastPathComponent();
+        if (node.rename(newName)) {
+            notifyAllNodeChanged(new TreeModelEvent(node, path));
+        }
+    }
+
+    @Override
     public int getIndexOfChild(Object parent, Object child) {
         TreeNode parentTreeNode = (TreeNode) parent;
         TreeNode treeNode = (TreeNode) child;
@@ -46,12 +55,13 @@ public class FileTreeModel implements TreeModel {
     }
 
     @Override
-    public void valueForPathChanged(TreePath path, Object newValue) {
-        String newName = (String) newValue;
-        FileNode node = (FileNode) path.getLastPathComponent();
-        if (node.rename(newName)) {
-            notifyAllNodeChanged(new TreeModelEvent(node, path));
-        }
+    public void addTreeModelListener(TreeModelListener l) {
+        listeners.add(l);
+    }
+
+    @Override
+    public void removeTreeModelListener(TreeModelListener l) {
+        listeners.remove(l);
     }
 
     public void refreshPath(TreePath path) {
@@ -70,15 +80,5 @@ public class FileTreeModel implements TreeModel {
         for (TreeModelListener listener : listeners) {
             listener.treeStructureChanged(e);
         }
-    }
-
-    @Override
-    public void addTreeModelListener(TreeModelListener l) {
-        listeners.add(l);
-    }
-
-    @Override
-    public void removeTreeModelListener(TreeModelListener l) {
-        listeners.remove(l);
     }
 }

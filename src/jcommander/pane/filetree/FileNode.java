@@ -83,17 +83,17 @@ public class FileNode implements TreeNode {
     }
 
     @Override
-    public String toString() {
-        return file.getName();
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof FileNode node)) {
             return false;
         }
 
         return file.equals(node.file);
+    }
+
+    @Override
+    public String toString() {
+        return file.getName();
     }
 
     public Handle getFile() {

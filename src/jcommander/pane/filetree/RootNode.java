@@ -5,7 +5,10 @@ import jcommander.filesystem.Handle;
 import jcommander.filesystem.RootHandle;
 
 import javax.swing.tree.TreeNode;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
 
 public class RootNode implements TreeNode {
 

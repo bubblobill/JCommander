@@ -10,8 +10,8 @@ import java.util.List;
 
 public class DirectoryListModel implements ListModel<Handle> {
 
-    private Handle[] files = new Handle[0];
     private final List<ListDataListener> listeners = new ArrayList<>();
+    private Handle[] files = new Handle[0];
 
     public void listDirectory(Handle[] files) {
         this.files = files;
