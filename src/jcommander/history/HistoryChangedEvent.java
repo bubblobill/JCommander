@@ -2,7 +2,7 @@ package jcommander.history;
 
 import java.util.EventObject;
 
-public class HistoryChangedEvent<T> extends EventObject {
+public class HistoryChangedEvent extends EventObject {
 
     private final boolean undo;
     private final boolean redo;

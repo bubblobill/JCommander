@@ -6,7 +6,7 @@ public abstract class FileHandle implements Handle {
 
     protected File file;
 
-    public FileHandle(File file) {
+    protected FileHandle(File file) {
         this.file = file;
     }
 

@@ -44,7 +44,7 @@ public class RootNode implements TreeNode {
 
     @Override
     public int getIndex(TreeNode node) {
-        return List.of(children).indexOf(node);
+        return children.indexOf(node);
     }
 
     @Override

@@ -2,7 +2,7 @@ package jcommander.history;
 
 import java.util.EventListener;
 
-public interface HistoryChangeListener<T> extends EventListener {
+public interface HistoryChangeListener extends EventListener {
 
-    void historyChanged(HistoryChangedEvent<T> e);
+    void historyChanged(HistoryChangedEvent e);
 }

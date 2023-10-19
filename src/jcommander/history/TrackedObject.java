@@ -12,7 +12,7 @@ public class TrackedObject<T> {
     private final Stack<T> undoHistory = new Stack<>();
     private final Stack<T> redoHistory = new Stack<>();
     private final List<ChangeListener> objectChangeListeners = new ArrayList<>();
-    private final List<HistoryChangeListener<T>> historyChangeListeners = new ArrayList<>();
+    private final List<HistoryChangeListener> historyChangeListeners = new ArrayList<>();
     private boolean hasBeenSet = false;
     private T object;
 
@@ -27,7 +27,7 @@ public class TrackedObject<T> {
                 undoHistory.push(object);
             }
             hasBeenSet = true;
-            notifyAllHistoryChanged(new HistoryChangedEvent<>(this, true, false));
+            notifyAllHistoryChanged(new HistoryChangedEvent(this, true, false));
             object = newObject;
         }
 
@@ -44,7 +44,7 @@ public class TrackedObject<T> {
         redoHistory.push(object);
         object = undid;
         notifyAllObjectChanged(new ChangeEvent(this));
-        notifyAllHistoryChanged(new HistoryChangedEvent<>(this, !undoHistory.isEmpty(), true));
+        notifyAllHistoryChanged(new HistoryChangedEvent(this, !undoHistory.isEmpty(), true));
     }
 
     public void redo() {
@@ -52,7 +52,7 @@ public class TrackedObject<T> {
         undoHistory.push(object);
         object = redid;
         notifyAllObjectChanged(new ChangeEvent(this));
-        notifyAllHistoryChanged(new HistoryChangedEvent<>(this, true, !redoHistory.isEmpty()));
+        notifyAllHistoryChanged(new HistoryChangedEvent(this, true, !redoHistory.isEmpty()));
     }
 
 
@@ -62,8 +62,8 @@ public class TrackedObject<T> {
         }
     }
 
-    private void notifyAllHistoryChanged(HistoryChangedEvent<T> e) {
-        for (HistoryChangeListener<T> listener : historyChangeListeners) {
+    private void notifyAllHistoryChanged(HistoryChangedEvent e) {
+        for (HistoryChangeListener listener : historyChangeListeners) {
             listener.historyChanged(e);
         }
     }
@@ -76,11 +76,11 @@ public class TrackedObject<T> {
         objectChangeListeners.remove(l);
     }
 
-    public void addHistoryChangeListener(HistoryChangeListener<T> l) {
+    public void addHistoryChangeListener(HistoryChangeListener l) {
         historyChangeListeners.add(l);
     }
 
-    public void removeHistoryChangeListener(HistoryChangeListener<T> l) {
+    public void removeHistoryChangeListener(HistoryChangeListener l) {
         historyChangeListeners.remove(l);
     }
 }

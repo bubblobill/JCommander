@@ -31,11 +31,11 @@ public class WorkingDirectory {
         trackedDirectory.removeChangeListener(l);
     }
 
-    public void addHistoryChangeListener(HistoryChangeListener<Handle> l) {
+    public void addHistoryChangeListener(HistoryChangeListener l) {
         trackedDirectory.addHistoryChangeListener(l);
     }
 
-    public void removeHistoryChangeListener(HistoryChangeListener<Handle> l) {
+    public void removeHistoryChangeListener(HistoryChangeListener l) {
         trackedDirectory.removeHistoryChangeListener(l);
     }
 

@@ -66,7 +66,7 @@ public class FileTreeController implements Controller {
         for (String label : pseudoPathFromString(wd.getAbsolutePath())) {
             for (int idx = 0; idx < leaf.getChildCount(); idx++) {
                 FileNode child = (FileNode) leaf.getChildAt(idx);
-                if (child.toString().equals(label)) { // TODO: Law of Demeter
+                if (child.toString().equals(label)) {
                     path.add(child);
                     break;
                 }
