@@ -31,7 +31,7 @@ public class CommanderInstance {
                 updateHistoryButtons(e.canUndo(), e.canRedo());
             }
         });
-        frame.add(paneA, BorderLayout.WEST);
+        frame.add(paneA.component(), BorderLayout.WEST);
 
         createCenterBar(frame);
 
@@ -41,7 +41,7 @@ public class CommanderInstance {
                 updateHistoryButtons(e.canUndo(), e.canRedo());
             }
         });
-        frame.add(paneB, BorderLayout.EAST);
+        frame.add(paneB.component(), BorderLayout.EAST);
 
         activePane = paneA; // by default, paneA is in focus
 

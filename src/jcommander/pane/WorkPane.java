@@ -10,9 +10,11 @@ import jcommander.pane.path.PathFieldController;
 import javax.swing.*;
 import java.awt.*;
 
-public class WorkPane extends JComponent {
+public class WorkPane implements Controller {
 
     private final WorkingDirectory wd = new WorkingDirectory();
+
+    private final JPanel panel;
 
     private final Controller parentButton;
     private final Controller pathField;
@@ -21,7 +23,7 @@ public class WorkPane extends JComponent {
     private final Controller list;
 
     public WorkPane() {
-        JPanel panel = new JPanel();
+        panel = new JPanel();
         panel.setLayout(new BorderLayout());
 
         JToolBar pathBar = new JToolBar();
@@ -42,15 +44,18 @@ public class WorkPane extends JComponent {
 
         panel.add(views, BorderLayout.CENTER);
 
-        add(panel);
-
         wd.addChangeListener(e -> refresh());
         wd.resetToRoot();
 
-        setLayout(new FlowLayout());
-        setPreferredSize(panel.getPreferredSize());
+        panel.setPreferredSize(panel.getPreferredSize());
     }
 
+    @Override
+    public JComponent component() {
+        return panel;
+    }
+
+    @Override
     public void refresh() {
         parentButton.refresh();
         pathField.refresh();
