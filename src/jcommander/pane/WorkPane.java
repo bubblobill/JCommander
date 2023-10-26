@@ -12,6 +12,7 @@ import java.awt.*;
 
 public class WorkPane extends JComponent {
 
+    public static final double TREE_TO_DIR_RATIO = 0.3d; // 30% for the file tree - 70% for the directory list
     private final WorkingDirectory wd = new WorkingDirectory();
 
     private final Controller parentButton;
@@ -39,6 +40,7 @@ public class WorkPane extends JComponent {
 
         JSplitPane views = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
                 new JScrollPane(tree.component()), new JScrollPane(list.component()));
+        views.setResizeWeight(TREE_TO_DIR_RATIO);
 
         panel.add(views, BorderLayout.CENTER);
 

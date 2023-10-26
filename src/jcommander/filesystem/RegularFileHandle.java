@@ -1,6 +1,7 @@
 package jcommander.filesystem;
 
 import jcommander.ResourceFactory;
+import jcommander.settings.IconType;
 
 import javax.swing.*;
 import java.io.File;
@@ -22,8 +23,8 @@ public class RegularFileHandle extends FileHandle {
     }
 
     @Override
-    public Icon getAssociatedIcon() {
-        return ResourceFactory.getIcon("file.png");
+    public IconType getAssociatedIcon() {
+        return IconType.FILE;
     }
 
     @Override

@@ -25,6 +25,7 @@ public class FileTreeController implements Controller {
 
         treeView = new JTree(fileSystemModel);
         treeView.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        treeView.setCellRenderer(new FileTreeCellRenderer());
         treeView.setEditable(true);
         treeView.addTreeSelectionListener(e -> {
             TreeNode node = (TreeNode) e.getPath().getLastPathComponent();

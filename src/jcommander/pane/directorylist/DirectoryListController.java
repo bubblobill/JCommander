@@ -20,7 +20,7 @@ public class DirectoryListController implements Controller {
         directoryModel = new DirectoryListModel();
         listView = new JList<>(directoryModel);
         listView.getSelectionModel().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        listView.setCellRenderer(new FileCellRenderer());
+        listView.setCellRenderer(new DirectoryListCellRenderer());
         listView.setDragEnabled(true);
         listView.addMouseListener(new MouseAdapter() {
             @Override
@@ -36,8 +36,6 @@ public class DirectoryListController implements Controller {
                 }
             }
         });
-
-        listView.setMinimumSize(listView.getPreferredScrollableViewportSize());
     }
 
     public JComponent component() {

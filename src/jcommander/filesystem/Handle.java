@@ -1,5 +1,7 @@
 package jcommander.filesystem;
 
+import jcommander.settings.IconType;
+
 import javax.swing.*;
 
 public interface Handle {
@@ -12,7 +14,7 @@ public interface Handle {
 
     Handle[] getChildren();
 
-    Icon getAssociatedIcon();
+    IconType getAssociatedIcon();
 
     boolean isLeaf();
 
