@@ -1,6 +1,6 @@
 package jcommander.pane.filetree;
 
-import jcommander.pane.Controller;
+import jcommander.pane.SelectionController;
 import jcommander.pane.model.WorkingDirectory;
 
 import javax.swing.*;
@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class FileTreeController implements Controller {
+public class FileTreeController implements SelectionController {
 
     private final WorkingDirectory wd;
     private final FileTreeModel fileSystemModel;
@@ -32,7 +32,7 @@ public class FileTreeController implements Controller {
                 wd.resetToRoot();
             } else {
                 FileNode fileNode = (FileNode) node;
-                wd.setTo(fileNode.getFile()); // tries to set, and does nothing if handle is not a directory
+                wd.setTo(fileNode.toFile()); // tries to set, and does nothing if handle is not a directory
             }
         });
     }
@@ -76,5 +76,29 @@ public class FileTreeController implements Controller {
         TreePath treePath = new TreePath(path.toArray());
         //fileSystemModel.refreshPath(treePath);
         treeView.expandPath(treePath); // this does not work as of now
+    }
+
+    @Override
+    public File[] getSelectedFiles() {
+        if (wd.isRoot()) {
+            return new File[0];
+        }
+
+        // Since the selection mode prohibits the selection of multiple nodes, it is sufficient to query for one
+        // selected node only.
+
+        // If it returns null, nothing is selected.
+        TreePath selectionPath = treeView.getSelectionPath();
+        if (selectionPath == null) {
+            return new File[0];
+        }
+
+        // Extract the underlying file otherwise.
+        FileNode node = (FileNode) selectionPath.getLastPathComponent();
+        File file = new File(node.toFile().getAbsolutePath());
+
+        File[] files = new File[1];
+        files[0] = file;
+        return files;
     }
 }

@@ -14,11 +14,7 @@ public class TrackedObject<T> {
     private final List<ChangeListener> objectChangeListeners = new ArrayList<>();
     private final List<HistoryChangeListener> historyChangeListeners = new ArrayList<>();
     private boolean hasBeenSet = false;
-    private T object;
-
-    public TrackedObject(T object) {
-        this.object = object;
-    }
+    private T object = null;
 
     public void set(T newObject) {
         if (!Objects.equals(object, newObject)) {
@@ -56,13 +52,13 @@ public class TrackedObject<T> {
     }
 
 
-    private void notifyAllObjectChanged(ChangeEvent e) {
+    public void notifyAllObjectChanged(ChangeEvent e) {
         for (ChangeListener listener : objectChangeListeners) {
             listener.stateChanged(e);
         }
     }
 
-    private void notifyAllHistoryChanged(HistoryChangedEvent e) {
+    public void notifyAllHistoryChanged(HistoryChangedEvent e) {
         for (HistoryChangeListener listener : historyChangeListeners) {
             listener.historyChanged(e);
         }

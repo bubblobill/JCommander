@@ -9,8 +9,9 @@ import jcommander.pane.path.PathFieldController;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 
-public class WorkPane implements Controller {
+public class WorkPane implements SelectionController {
 
     private final WorkingDirectory wd = new WorkingDirectory();
 
@@ -19,8 +20,8 @@ public class WorkPane implements Controller {
     private final Controller parentButton;
     private final Controller pathField;
 
-    private final Controller tree;
-    private final Controller list;
+    private final SelectionController tree;
+    private final SelectionController list;
 
     public WorkPane() {
         panel = new JPanel();
@@ -39,8 +40,7 @@ public class WorkPane implements Controller {
         tree = new FileTreeController(wd);
         list = new DirectoryListController(wd);
 
-        JSplitPane views = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-                new JScrollPane(tree.component()), new JScrollPane(list.component()));
+        JSplitPane views = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new JScrollPane(tree.component()), new JScrollPane(list.component()));
 
         panel.add(views, BorderLayout.CENTER);
 
@@ -69,6 +69,15 @@ public class WorkPane implements Controller {
 
     public void selectNext() {
         wd.selectNext();
+    }
+
+    public String getWorkingDirectoryPath() {
+        return wd.getAbsolutePath();
+    }
+
+    @Override
+    public File[] getSelectedFiles() {
+        return list.getSelectedFiles();
     }
 
     public void addHistoryChangeListener(HistoryChangeListener l) {

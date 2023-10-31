@@ -1,14 +1,15 @@
 package jcommander.pane.directorylist;
 
 import jcommander.filesystem.Handle;
-import jcommander.pane.Controller;
+import jcommander.pane.SelectionController;
 import jcommander.pane.model.WorkingDirectory;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 
-public class DirectoryListController implements Controller {
+public class DirectoryListController implements SelectionController {
 
     private final WorkingDirectory wd;
     private final DirectoryListModel directoryModel;
@@ -48,5 +49,18 @@ public class DirectoryListController implements Controller {
     public void refresh() {
         listView.clearSelection();
         directoryModel.listDirectory(wd.list());
+    }
+
+    @Override
+    public File[] getSelectedFiles() {
+        if (wd.isRoot()) {
+            return new File[0];
+        }
+
+        return listView.getSelectedValuesList()
+                       .stream()
+                       .map(handle -> new File(handle.getAbsolutePath()))
+                       .toList()
+                       .toArray(new File[0]);
     }
 }

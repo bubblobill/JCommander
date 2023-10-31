@@ -9,7 +9,7 @@ import javax.swing.event.ChangeListener;
 
 public class WorkingDirectory {
 
-    private final TrackedObject<Handle> trackedDirectory = new TrackedObject<>(null);
+    private final TrackedObject<Handle> trackedDirectory = new TrackedObject<>();
 
     public void resetToRoot() {
         trackedDirectory.set(new RootHandle());

@@ -96,7 +96,7 @@ public class FileNode implements TreeNode {
         return file.getName();
     }
 
-    public Handle getFile() {
+    public Handle toFile() {
         return file;
     }
 }

@@ -1,9 +1,15 @@
 package jcommander;
 
+import jcommander.operation.CopyOperation;
+import jcommander.operation.Operation;
+import jcommander.operation.RefreshOperation;
+import jcommander.operation.ThenOperation;
 import jcommander.pane.WorkPane;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import static jcommander.ResourceFactory.getIcon;
 
@@ -12,7 +18,10 @@ public class CommanderInstance {
     private final JFrame frame;
     private final WorkPane paneA;
     private final WorkPane paneB;
+    private final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(Runtime.getRuntime()
+                                                                                                .availableProcessors());
     private WorkPane activePane;
+    private WorkPane passivePane;
     private JButton previous;
     private JButton next;
 
@@ -37,13 +46,14 @@ public class CommanderInstance {
 
         paneB = new WorkPane();
         paneB.addHistoryChangeListener(e -> {
-            if (activePane == paneA) {
+            if (activePane == paneB) {
                 updateHistoryButtons(e.canUndo(), e.canRedo());
             }
         });
         frame.add(paneB.component(), BorderLayout.EAST);
 
         activePane = paneA; // by default, paneA is in focus
+        passivePane = paneB; // TODO: it must always be the pane that is not the active pane
 
         updateHistoryButtons(false, false);
 
@@ -107,6 +117,10 @@ public class CommanderInstance {
     }
 
     private void issueCopyOperation() {
+        for (File sourceFile : activePane.getSelectedFiles()) {
+            File targetFile = new File(passivePane.getWorkingDirectoryPath(), sourceFile.getName());
+            executor.execute(new CopyOperation(sourceFile, targetFile).then(new RefreshOperation(passivePane)));
+        }
     }
 
     private void issueMoveOperation() {
