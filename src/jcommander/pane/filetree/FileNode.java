@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
-public class FileNode implements TreeNode {
+public class FileNode implements TreeNode, FsNode {
 
     private final FileNode parent;
     private final List<FileNode> children = new ArrayList<>();
@@ -97,6 +97,11 @@ public class FileNode implements TreeNode {
     }
 
     public Handle toFile() {
+        return file;
+    }
+
+    @Override
+    public Handle getHandle() {
         return file;
     }
 }

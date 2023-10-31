@@ -1,6 +1,7 @@
 package jcommander.filesystem;
 
 import jcommander.ResourceFactory;
+import jcommander.settings.IconType;
 
 import javax.swing.*;
 import java.io.File;
@@ -21,8 +22,8 @@ public class MountHandle extends DirectoryHandle {
     }
 
     @Override
-    public Icon getAssociatedIcon() {
-        return ResourceFactory.getIcon("disk.png");
+    public IconType getAssociatedIcon() {
+        return IconType.DISK;
     }
 
     @Override

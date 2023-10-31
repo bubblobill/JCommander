@@ -1,6 +1,7 @@
 package jcommander.filesystem;
 
 import jcommander.ResourceFactory;
+import jcommander.settings.IconType;
 
 import javax.swing.*;
 import java.io.File;
@@ -39,8 +40,8 @@ public class RootHandle implements Handle {
     }
 
     @Override
-    public Icon getAssociatedIcon() {
-        return ResourceFactory.getIcon("computer.png");
+    public IconType getAssociatedIcon() {
+        return IconType.COMPUTER;
     }
 
     @Override

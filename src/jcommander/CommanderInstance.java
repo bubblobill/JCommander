@@ -1,19 +1,25 @@
 package jcommander;
 
 import jcommander.operation.CopyOperation;
-import jcommander.operation.Operation;
 import jcommander.operation.RefreshOperation;
-import jcommander.operation.ThenOperation;
 import jcommander.pane.WorkPane;
+import jcommander.settings.IconStyle;
+import jcommander.settings.IconType;
+import jcommander.settings.Settings;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import static jcommander.ResourceFactory.getIcon;
 
 public class CommanderInstance {
+
+    private static final String INSTANCE_TITLE = "JCommander";
+
+    private final Settings settings = new Settings(new File("settings.txt"));
 
     private final JFrame frame;
     private final WorkPane paneA;
@@ -25,9 +31,8 @@ public class CommanderInstance {
     private JButton previous;
     private JButton next;
 
-    public CommanderInstance() {
-        frame = new JFrame("JCommander");
-        frame.setResizable(false);
+    public CommanderInstance() throws IOException {
+        frame = new JFrame(INSTANCE_TITLE);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
 
@@ -58,6 +63,7 @@ public class CommanderInstance {
         updateHistoryButtons(false, false);
 
         frame.pack();
+        frame.setResizable(false);
         frame.setVisible(true);
     }
 
@@ -69,8 +75,19 @@ public class CommanderInstance {
     private void createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
         JMenu fileMenu = new JMenu("File");
-        fileMenu.add(new JMenuItem("New Window"));
+        JMenuItem exitItem = new JMenuItem("Exit");
+        exitItem.addActionListener(event -> System.exit(0));
+        fileMenu.add(exitItem);
+
         menuBar.add(fileMenu);
+
+        JMenu viewMenu = new JMenu("View");
+        JCheckBoxMenuItem showTreeViewItem = new JCheckBoxMenuItem("Show Tree View");
+        showTreeViewItem.addActionListener(event -> settings.setShowTreeView(viewMenu.isSelected()));
+        viewMenu.add(showTreeViewItem);
+
+        menuBar.add(viewMenu);
+
         frame.setJMenuBar(menuBar);
     }
 
@@ -78,22 +95,22 @@ public class CommanderInstance {
         JToolBar topBar = new JToolBar(SwingConstants.HORIZONTAL);
         topBar.setFloatable(false);
         JButton refresh = new JButton();
-        refresh.setIcon(getIcon("refresh.png"));
+        refresh.setIcon(getIcon(IconType.REFRESH, IconStyle.COLORFUL));
         refresh.addActionListener(e -> {
             paneA.refresh();
             paneB.refresh();
         });
         topBar.add(refresh);
         JButton find = new JButton();
-        find.setIcon(getIcon("find.png"));
+        find.setIcon(getIcon(IconType.FIND, IconStyle.COLORFUL));
         find.addActionListener(e -> openFindDialog());
         topBar.add(find);
         previous = new JButton();
-        previous.setIcon(getIcon("left.png"));
+        previous.setIcon(getIcon(IconType.LEFT, IconStyle.COLORFUL));
         previous.addActionListener(e -> activePane.selectPrevious());
         topBar.add(previous);
         next = new JButton();
-        next.setIcon(getIcon("right.png"));
+        next.setIcon(getIcon(IconType.RIGHT, IconStyle.COLORFUL));
         next.addActionListener(e -> activePane.selectNext());
         topBar.add(next);
         container.add(topBar, BorderLayout.NORTH);
@@ -103,11 +120,11 @@ public class CommanderInstance {
         JToolBar centerBar = new JToolBar(SwingConstants.VERTICAL);
         centerBar.setFloatable(false);
         JButton copy = new JButton();
-        copy.setIcon(getIcon("copy.png"));
+        copy.setIcon(getIcon(IconType.COPY, IconStyle.COLORFUL));
         copy.addActionListener(e -> issueCopyOperation());
         centerBar.add(copy);
         JButton move = new JButton();
-        move.setIcon(getIcon("move.png"));
+        move.setIcon(getIcon(IconType.MOVE, IconStyle.COLORFUL));
         move.addActionListener(e -> issueMoveOperation());
         centerBar.add(move);
         container.add(centerBar, BorderLayout.CENTER);

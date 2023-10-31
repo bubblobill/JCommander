@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
-public class RootNode implements TreeNode {
+public class RootNode implements TreeNode, FsNode {
 
     private final RootHandle root;
     private final List<FileNode> children = new ArrayList<>();
@@ -65,5 +65,10 @@ public class RootNode implements TreeNode {
     @Override
     public String toString() {
         return root.getName();
+    }
+
+    @Override
+    public Handle getHandle() {
+        return root;
     }
 }
