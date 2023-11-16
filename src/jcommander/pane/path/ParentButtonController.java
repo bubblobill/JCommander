@@ -3,7 +3,6 @@ package jcommander.pane.path;
 import jcommander.ResourceFactory;
 import jcommander.pane.Controller;
 import jcommander.pane.model.WorkingDirectory;
-import jcommander.settings.IconStyle;
 import jcommander.settings.IconType;
 
 import javax.swing.*;
@@ -16,7 +15,7 @@ public class ParentButtonController implements Controller {
     public ParentButtonController(WorkingDirectory wd) {
         this.wd = wd;
 
-        button = new JButton(ResourceFactory.getIcon(IconType.UP, IconStyle.COLORFUL));
+        button = new JButton(ResourceFactory.getIcon(IconType.UP));
         button.addActionListener(e -> wd.selectParent());
     }
 

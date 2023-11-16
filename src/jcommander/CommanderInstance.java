@@ -1,16 +1,20 @@
 package jcommander;
 
-import jcommander.operation.CopyOperation;
-import jcommander.operation.RefreshOperation;
+import jcommander.operation.*;
 import jcommander.pane.WorkPane;
-import jcommander.settings.IconStyle;
 import jcommander.settings.IconType;
 import jcommander.settings.Settings;
 
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
 import java.awt.*;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.io.File;
-import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+import java.util.Optional;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import static jcommander.ResourceFactory.getIcon;
@@ -18,8 +22,9 @@ import static jcommander.ResourceFactory.getIcon;
 public class CommanderInstance {
 
     private static final String INSTANCE_TITLE = "JCommander";
+    private static final String SETTINGS_FILE_NAME = "settings.txt";
 
-    private final Settings settings = new Settings(new File("settings.txt"));
+    private final Settings settings = new Settings(new File(SETTINGS_FILE_NAME));
 
     private final JFrame frame;
     private final WorkPane paneA;
@@ -31,15 +36,26 @@ public class CommanderInstance {
     private JButton previous;
     private JButton next;
 
-    public CommanderInstance() throws IOException {
+    public CommanderInstance() {
         frame = new JFrame(INSTANCE_TITLE);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
 
-        createMenuBar();
-        createTopBar(frame);
+        ComponentFactory factoryA = new ComponentFactory(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                setActiveAndPassivePane(paneA, paneB);
+            }
+        }, settings);
 
-        paneA = new WorkPane();
+        ComponentFactory factoryB = new ComponentFactory(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                setActiveAndPassivePane(paneB, paneA);
+            }
+        }, settings);
+
+        paneA = factoryA.create(WorkPane.class, factoryA);
         paneA.addHistoryChangeListener(e -> {
             if (activePane == paneA) {
                 updateHistoryButtons(e.canUndo(), e.canRedo());
@@ -47,9 +63,7 @@ public class CommanderInstance {
         });
         frame.add(paneA.component(), BorderLayout.WEST);
 
-        createCenterBar(frame);
-
-        paneB = new WorkPane();
+        paneB = factoryB.create(WorkPane.class, factoryB);
         paneB.addHistoryChangeListener(e -> {
             if (activePane == paneB) {
                 updateHistoryButtons(e.canUndo(), e.canRedo());
@@ -57,17 +71,32 @@ public class CommanderInstance {
         });
         frame.add(paneB.component(), BorderLayout.EAST);
 
-        activePane = paneA; // by default, paneA is in focus
-        passivePane = paneB; // TODO: it must always be the pane that is not the active pane
+        createMenuBar();
+        createTopBar(frame);
+        createCenterBar(frame);
 
-        updateHistoryButtons(false, false);
+        // by default, paneA is in foreground, and paneB is in background
+        setActiveAndPassivePane(paneA, paneB);
+
+        settings.refreshSettings();
 
         frame.pack();
         frame.setResizable(false);
         frame.setVisible(true);
     }
 
+    private void setActiveAndPassivePane(WorkPane active, WorkPane passive) {
+        activePane = active;
+        passivePane = passive;
+        activePane.notifyAllAboutWdHistory();
+        activePane.component()
+                  .setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED, Color.RED, Color.RED));
+        passivePane.component()
+                   .setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED, Color.WHITE, Color.WHITE));
+    }
+
     private void updateHistoryButtons(boolean undo, boolean redo) {
+        activePane.component().transferFocus(); // very clunky, but works
         previous.setEnabled(undo);
         next.setEnabled(redo);
     }
@@ -83,7 +112,9 @@ public class CommanderInstance {
 
         JMenu viewMenu = new JMenu("View");
         JCheckBoxMenuItem showTreeViewItem = new JCheckBoxMenuItem("Show Tree View");
-        showTreeViewItem.addActionListener(event -> settings.setShowTreeView(viewMenu.isSelected()));
+        showTreeViewItem.setSelected(Boolean.parseBoolean(settings.get(Settings.Option.SHOW_TREE_VIEW)));
+        showTreeViewItem.addActionListener(event -> settings.set(Settings.Option.SHOW_TREE_VIEW,
+                showTreeViewItem.isSelected()));
         viewMenu.add(showTreeViewItem);
 
         menuBar.add(viewMenu);
@@ -95,22 +126,18 @@ public class CommanderInstance {
         JToolBar topBar = new JToolBar(SwingConstants.HORIZONTAL);
         topBar.setFloatable(false);
         JButton refresh = new JButton();
-        refresh.setIcon(getIcon(IconType.REFRESH, IconStyle.COLORFUL));
+        refresh.setIcon(getIcon(IconType.REFRESH));
         refresh.addActionListener(e -> {
             paneA.refresh();
             paneB.refresh();
         });
         topBar.add(refresh);
-        JButton find = new JButton();
-        find.setIcon(getIcon(IconType.FIND, IconStyle.COLORFUL));
-        find.addActionListener(e -> openFindDialog());
-        topBar.add(find);
         previous = new JButton();
-        previous.setIcon(getIcon(IconType.LEFT, IconStyle.COLORFUL));
+        previous.setIcon(getIcon(IconType.LEFT));
         previous.addActionListener(e -> activePane.selectPrevious());
         topBar.add(previous);
         next = new JButton();
-        next.setIcon(getIcon(IconType.RIGHT, IconStyle.COLORFUL));
+        next.setIcon(getIcon(IconType.RIGHT));
         next.addActionListener(e -> activePane.selectNext());
         topBar.add(next);
         container.add(topBar, BorderLayout.NORTH);
@@ -120,26 +147,33 @@ public class CommanderInstance {
         JToolBar centerBar = new JToolBar(SwingConstants.VERTICAL);
         centerBar.setFloatable(false);
         JButton copy = new JButton();
-        copy.setIcon(getIcon(IconType.COPY, IconStyle.COLORFUL));
-        copy.addActionListener(e -> issueCopyOperation());
+        copy.setIcon(getIcon(IconType.COPY));
+        copy.addActionListener(e -> issueFileOperation(CopyOperation.class));
         centerBar.add(copy);
         JButton move = new JButton();
-        move.setIcon(getIcon(IconType.MOVE, IconStyle.COLORFUL));
-        move.addActionListener(e -> issueMoveOperation());
+        move.setIcon(getIcon(IconType.MOVE));
+        move.addActionListener(e -> issueFileOperation(MoveOperation.class));
         centerBar.add(move);
         container.add(centerBar, BorderLayout.CENTER);
     }
 
-    private void openFindDialog() {
-    }
+    private void issueFileOperation(Class<? extends FileOperation> operationClass) {
+        Constructor<?>[] declaredConstructors = operationClass.getDeclaredConstructors();
+        Optional<Constructor<?>> matching = Arrays.stream(declaredConstructors)
+                                               .filter(constructor -> constructor.getParameterCount() == 2).findFirst();
+        if (matching.isEmpty()) {
+            throw new IllegalArgumentException("Operation class has no two-parameter constructor.");
+        }
+        Constructor<?> constructor = matching.get();
 
-    private void issueCopyOperation() {
         for (File sourceFile : activePane.getSelectedFiles()) {
             File targetFile = new File(passivePane.getWorkingDirectoryPath(), sourceFile.getName());
-            executor.execute(new CopyOperation(sourceFile, targetFile).then(new RefreshOperation(passivePane)));
+            try {
+                Operation operation = (Operation) constructor.newInstance(sourceFile, targetFile);
+                executor.execute(operation.then(new RefreshOperation(passivePane)));
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+                throw new IllegalArgumentException("Operation is unsuitable.");
+            }
         }
-    }
-
-    private void issueMoveOperation() {
     }
 }

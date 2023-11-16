@@ -51,6 +51,10 @@ public class WorkingDirectory {
         setTo(trackedDirectory.get().getParent());
     }
 
+    public void notifyAllAboutWdHistory() {
+        trackedDirectory.notifyAllAboutHistory();
+    }
+
     public void selectPrevious() {
         trackedDirectory.undo();
     }

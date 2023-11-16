@@ -1,17 +1,21 @@
 package jcommander.pane;
 
+import jcommander.ComponentFactory;
 import jcommander.history.HistoryChangeListener;
 import jcommander.pane.directorylist.DirectoryListController;
 import jcommander.pane.filetree.FileTreeController;
 import jcommander.pane.model.WorkingDirectory;
 import jcommander.pane.path.ParentButtonController;
 import jcommander.pane.path.PathFieldController;
+import jcommander.settings.SettingChangeListener;
+import jcommander.settings.SettingChangedEvent;
+import jcommander.settings.Settings;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 
-public class WorkPane implements SelectionController {
+public class WorkPane implements SelectionController, SettingChangeListener {
 
     private static final double TREE_TO_DIR_RATIO = 0.3d; // 30% for the file tree - 70% for the directory list
     private final WorkingDirectory wd = new WorkingDirectory();
@@ -23,25 +27,27 @@ public class WorkPane implements SelectionController {
 
     private final SelectionController tree;
     private final SelectionController list;
+    private final JSplitPane views;
 
-    public WorkPane() {
+    public WorkPane(ComponentFactory factory) {
+
         panel = new JPanel();
         panel.setLayout(new BorderLayout());
 
         JToolBar pathBar = new JToolBar();
         pathBar.setFloatable(false);
 
-        parentButton = new ParentButtonController(wd);
-        pathField = new PathFieldController(wd);
+        parentButton = factory.create(ParentButtonController.class, wd);
+        pathField = factory.create(PathFieldController.class, wd);
 
         pathBar.add(parentButton.component());
         pathBar.add(pathField.component());
         panel.add(pathBar, BorderLayout.NORTH);
 
-        tree = new FileTreeController(wd);
-        list = new DirectoryListController(wd);
+        tree = factory.create(FileTreeController.class, wd);
+        list = factory.create(DirectoryListController.class, wd);
 
-        JSplitPane views = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+        views = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
                 new JScrollPane(tree.component()), new JScrollPane(list.component()));
         views.setResizeWeight(TREE_TO_DIR_RATIO);
 
@@ -64,6 +70,10 @@ public class WorkPane implements SelectionController {
         pathField.refresh();
         tree.refresh();
         list.refresh();
+    }
+
+    public void notifyAllAboutWdHistory() {
+        wd.notifyAllAboutWdHistory();
     }
 
     public void selectPrevious() {
@@ -89,5 +99,17 @@ public class WorkPane implements SelectionController {
 
     public void removeHistoryChangeListener(HistoryChangeListener l) {
         wd.removeHistoryChangeListener(l);
+    }
+
+    @Override
+    public void settingChanged(SettingChangedEvent event) {
+        if (event.option() == Settings.Option.SHOW_TREE_VIEW) {
+            boolean visible = Boolean.parseBoolean(event.value().toString());
+            if (visible) {
+                views.setLeftComponent(tree.component());
+            } else {
+                views.setLeftComponent(null);
+            }
+        }
     }
 }

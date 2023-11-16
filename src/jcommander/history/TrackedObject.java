@@ -52,13 +52,13 @@ public class TrackedObject<T> {
     }
 
 
-    public void notifyAllObjectChanged(ChangeEvent e) {
+    private void notifyAllObjectChanged(ChangeEvent e) {
         for (ChangeListener listener : objectChangeListeners) {
             listener.stateChanged(e);
         }
     }
 
-    public void notifyAllHistoryChanged(HistoryChangedEvent e) {
+    private void notifyAllHistoryChanged(HistoryChangedEvent e) {
         for (HistoryChangeListener listener : historyChangeListeners) {
             listener.historyChanged(e);
         }
@@ -78,5 +78,9 @@ public class TrackedObject<T> {
 
     public void removeHistoryChangeListener(HistoryChangeListener l) {
         historyChangeListeners.remove(l);
+    }
+
+    public void notifyAllAboutHistory() {
+        notifyAllHistoryChanged(new HistoryChangedEvent(this, !undoHistory.isEmpty(), !redoHistory.isEmpty()));
     }
 }
