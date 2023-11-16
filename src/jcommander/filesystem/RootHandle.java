@@ -1,9 +1,7 @@
 package jcommander.filesystem;
 
-import jcommander.ResourceFactory;
 import jcommander.settings.IconType;
 
-import javax.swing.*;
 import java.io.File;
 
 public class RootHandle implements Handle {

@@ -1,13 +1,11 @@
 package jcommander.filesystem;
 
-import jcommander.ResourceFactory;
 import jcommander.settings.IconType;
 
-import javax.swing.*;
 import java.io.File;
 
 public class MountHandle extends DirectoryHandle {
-
+    
     public MountHandle(File mount) {
         super(mount); // this is quirky
         // only because of inheritance are we obliged to call super first, even if the parameter turns out to be wrong
