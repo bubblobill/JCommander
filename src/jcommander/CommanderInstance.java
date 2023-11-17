@@ -96,7 +96,6 @@ public class CommanderInstance {
     }
 
     private void updateHistoryButtons(boolean undo, boolean redo) {
-        activePane.component().transferFocus(); // very clunky, but works
         previous.setEnabled(undo);
         next.setEnabled(redo);
     }
@@ -133,10 +132,12 @@ public class CommanderInstance {
         });
         topBar.add(refresh);
         previous = new JButton();
+        previous.setFocusable(false);
         previous.setIcon(getIcon(IconType.LEFT));
         previous.addActionListener(e -> activePane.selectPrevious());
         topBar.add(previous);
         next = new JButton();
+        next.setFocusable(false);
         next.setIcon(getIcon(IconType.RIGHT));
         next.addActionListener(e -> activePane.selectNext());
         topBar.add(next);
