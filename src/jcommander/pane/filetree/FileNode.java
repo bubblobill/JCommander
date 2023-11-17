@@ -83,6 +83,11 @@ public class FileNode implements TreeNode, FsNode {
     }
 
     @Override
+    public int hashCode() {
+        return file.hashCode();
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof FileNode node)) {
             return false;

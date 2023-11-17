@@ -6,6 +6,8 @@ import jcommander.pane.model.WorkingDirectory;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.io.File;
 
 public class PathFieldController implements Controller {

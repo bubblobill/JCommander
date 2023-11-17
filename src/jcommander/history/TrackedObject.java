@@ -2,15 +2,12 @@ package jcommander.history;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Stack;
+import java.util.*;
 
 public class TrackedObject<T> {
 
-    private final Stack<T> undoHistory = new Stack<>();
-    private final Stack<T> redoHistory = new Stack<>();
+    private final Deque<T> undoHistory = new ArrayDeque<>();
+    private final Deque<T> redoHistory = new ArrayDeque<>();
     private final List<ChangeListener> objectChangeListeners = new ArrayList<>();
     private final List<HistoryChangeListener> historyChangeListeners = new ArrayList<>();
     private boolean hasBeenSet = false;

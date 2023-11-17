@@ -3,11 +3,9 @@ A light-weight, TotalCommander inspired, dual-pane file manager written in Java.
 
 ## ToDo list
 - [x] Add "to parent folder" button
-- [ ] Settings
+- [x] Settings
   - [x] Menu entry for that in the menu bar
-  - [ ] Properties with KEY=VALUE export
-  - [ ] Styling options for the icon pack in use
-    - [ ] AbstractResourceFactory(?)
+  - [x] Properties with KEY=VALUE export
 - [x] Encapsulate working directory
   - [x] Handle things properly when nothing is selected
   - [x] History should store previous versions of the object
