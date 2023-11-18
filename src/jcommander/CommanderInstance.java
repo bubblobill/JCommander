@@ -89,8 +89,7 @@ public class CommanderInstance {
         activePane = active;
         passivePane = passive;
         activePane.notifyAllAboutWdHistory();
-        activePane.component()
-                  .setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED, Color.RED, Color.RED));
+        activePane.component().setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED, Color.RED, Color.RED));
         passivePane.component()
                    .setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED, Color.WHITE, Color.WHITE));
     }
@@ -112,8 +111,7 @@ public class CommanderInstance {
         JMenu viewMenu = new JMenu("View");
         JCheckBoxMenuItem showTreeViewItem = new JCheckBoxMenuItem("Show Tree View");
         showTreeViewItem.setSelected(Boolean.parseBoolean(settings.get(Settings.Option.SHOW_TREE_VIEW)));
-        showTreeViewItem.addActionListener(event -> settings.set(Settings.Option.SHOW_TREE_VIEW,
-                showTreeViewItem.isSelected()));
+        showTreeViewItem.addActionListener(event -> settings.set(Settings.Option.SHOW_TREE_VIEW, showTreeViewItem.isSelected()));
         viewMenu.add(showTreeViewItem);
 
         menuBar.add(viewMenu);
@@ -125,6 +123,7 @@ public class CommanderInstance {
         JToolBar topBar = new JToolBar(SwingConstants.HORIZONTAL);
         topBar.setFloatable(false);
         JButton refresh = new JButton();
+        refresh.setFocusable(false);
         refresh.setIcon(getIcon(IconType.REFRESH));
         refresh.addActionListener(e -> {
             paneA.refresh();
@@ -147,21 +146,55 @@ public class CommanderInstance {
     private void createCenterBar(Container container) {
         JToolBar centerBar = new JToolBar(SwingConstants.VERTICAL);
         centerBar.setFloatable(false);
+
+        JButton newDir = new JButton();
+        newDir.setFocusable(false);
+        newDir.setIcon(getIcon(IconType.NEW_DIRECTORY));
+        newDir.addActionListener(e -> issueNewDirectoryOperation());
+        centerBar.add(newDir);
+
+        JButton delete = new JButton();
+        delete.setFocusable(false);
+        delete.setIcon(getIcon(IconType.DELETE));
+        delete.addActionListener(e -> issueDeleteOperation(activePane.getSelectedFiles()));
+        centerBar.add(delete);
+
         JButton copy = new JButton();
+        copy.setFocusable(false);
         copy.setIcon(getIcon(IconType.COPY));
         copy.addActionListener(e -> issueFileOperation(CopyOperation.class));
         centerBar.add(copy);
+
         JButton move = new JButton();
+        move.setFocusable(false);
         move.setIcon(getIcon(IconType.MOVE));
         move.addActionListener(e -> issueFileOperation(MoveOperation.class));
         centerBar.add(move);
+
         container.add(centerBar, BorderLayout.CENTER);
+    }
+
+    private void issueDeleteOperation(File[] selectedFiles) {
+        String title = "Delete Files";
+        String message = "Are you sure you want to delete every selected file and directory?";
+        if (JOptionPane.showConfirmDialog(frame, message, title, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            executor.execute(new DeleteOperation(selectedFiles).then(new RefreshOperation(activePane)));
+        }
+    }
+
+    private void issueNewDirectoryOperation() {
+        Operation operation = new NewDirectoryOperation(activePane.getWorkingDirectoryPath()
+                + File.separator
+                + "New Directory")
+                .then(new RefreshOperation(activePane));
+        executor.execute(operation);
     }
 
     private void issueFileOperation(Class<? extends FileOperation> operationClass) {
         Constructor<?>[] declaredConstructors = operationClass.getDeclaredConstructors();
         Optional<Constructor<?>> matching = Arrays.stream(declaredConstructors)
-                                               .filter(constructor -> constructor.getParameterCount() == 2).findFirst();
+                                                  .filter(constructor -> constructor.getParameterCount() == 2)
+                                                  .findFirst();
         if (matching.isEmpty()) {
             throw new IllegalArgumentException("Operation class has no two-parameter constructor.");
         }
@@ -171,7 +204,8 @@ public class CommanderInstance {
             File targetFile = new File(passivePane.getWorkingDirectoryPath(), sourceFile.getName());
             try {
                 Operation operation = (Operation) constructor.newInstance(sourceFile, targetFile);
-                executor.execute(operation.then(new RefreshOperation(passivePane)));
+                executor.execute(operation.then(new RefreshOperation(passivePane))
+                                          .then(new RefreshOperation(activePane)));
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
                 throw new IllegalArgumentException("Operation is unsuitable.");
             }
