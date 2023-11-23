@@ -104,7 +104,7 @@ public class WorkPane implements SelectionController, SettingChangeListener {
     @Override
     public void settingChanged(SettingChangedEvent event) {
         if (event.option() == Settings.Option.SHOW_TREE_VIEW) {
-            boolean visible = Boolean.parseBoolean(event.value().toString());
+            boolean visible = Boolean.parseBoolean(event.value());
             if (visible) {
                 views.setLeftComponent(tree.component());
             } else {
