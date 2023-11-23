@@ -6,7 +6,7 @@ import java.util.*;
 public class Settings {
 
     public enum Option {
-        SHOW_TREE_VIEW(true);
+        SHOW_TREE_VIEW(true), HIGHLIGHT_ACTIVE_PANE(false);
 
         private final Object defaultValue;
 
@@ -48,7 +48,8 @@ public class Settings {
     }
 
     public void set(Option option, Object value) {
-        properties.setProperty(option.toString(), value.toString());
+        String valueAsString = value.toString();
+        properties.setProperty(option.toString(), valueAsString);
 
         try {
             save();
@@ -56,7 +57,7 @@ public class Settings {
             System.err.println("Couldn't save settings: " + e.getMessage());
         }
 
-        notifyAllSettingChanged(new SettingChangedEvent(option, value));
+        notifyAllSettingChanged(new SettingChangedEvent(option, valueAsString));
     }
 
     public String get(Option option) {
@@ -66,7 +67,7 @@ public class Settings {
     public void refreshSettings() {
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
             Option option = Option.valueOf(entry.getKey().toString());
-            notifyAllSettingChanged(new SettingChangedEvent(option, entry.getValue()));
+            notifyAllSettingChanged(new SettingChangedEvent(option, entry.getValue().toString()));
         }
     }
 

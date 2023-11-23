@@ -110,6 +110,7 @@ public class WorkPane implements SelectionController, SettingChangeListener {
             } else {
                 views.setLeftComponent(null);
             }
+            views.setResizeWeight(TREE_TO_DIR_RATIO);
         }
     }
 }
