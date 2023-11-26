@@ -21,10 +21,6 @@ kerülnek a másolandó vagy áthelyezendő elemek.
 
 ## Use-case-ek
 
-_Minta a felhasználói felület kialakítása:_
-
-![Low fidelity wireframe](../res/low-fidelity-wireframe.jpg)
-
 A program által **támogatott műveletek**:
  * navigálás **"lefelé"** (gyerek objektumok: mappa vagy csatolási pont)
  * navigálás **"felfelé"** (szülő objektumok: mappa, csatolási pont vagy gyökér elem)
