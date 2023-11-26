@@ -18,6 +18,12 @@ public class FileTreeController implements SelectionController {
     private final FileTreeModel fileSystemModel;
     private final JTree treeView;
 
+    /**
+     * Constructs the controller of a FileTree consisting of the model,
+     * the view, and a reference to the working directory model it is attached to.
+     *
+     * @param wd the working directory
+     */
     public FileTreeController(WorkingDirectory wd) {
         this.wd = wd;
 
@@ -75,7 +81,6 @@ public class FileTreeController implements SelectionController {
         }
 
         TreePath treePath = new TreePath(path.toArray());
-        //fileSystemModel.refreshPath(treePath);
         treeView.expandPath(treePath); // this does not work as of now
     }
 

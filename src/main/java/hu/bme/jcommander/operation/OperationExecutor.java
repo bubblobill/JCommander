@@ -7,6 +7,7 @@ import java.awt.*;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.Executor;
@@ -27,14 +28,25 @@ public class OperationExecutor implements Executor {
         executor.execute(operation);
     }
 
+    /**
+     * Issues a new directory creation operation.
+     *
+     * @param activePane the active work pane
+     */
     public void issueNewDirectoryOperation(WorkPane activePane) {
-        Operation operation = new NewDirectoryOperation(activePane.getWorkingDirectoryPath()
-                + File.separator
-                + "New Directory")
+        Operation operation = new NewDirectoryOperation(
+                Path.of(activePane.getWorkingDirectoryPath(), "New Directory"))
                 .then(new RefreshOperation(activePane));
         executor.execute(operation);
     }
 
+    /**
+     * Issues a file deletion operation with user confirmation.
+     *
+     * @param activePane    the active work pane
+     * @param parent        the parent component for displaying the confirmation dialog
+     * @param selectedFiles the files to be deleted
+     */
     public void issueDeleteOperation(WorkPane activePane, Component parent, File[] selectedFiles) {
         String title = "Delete Files";
         String message = "Are you sure you want to delete every selected file and directory?";
@@ -43,6 +55,13 @@ public class OperationExecutor implements Executor {
         }
     }
 
+    /**
+     * Issues a file operation between two work panes.
+     *
+     * @param activePane     the active work pane
+     * @param passivePane    the passive work pane
+     * @param operationClass the class of the file operation to be executed
+     */
     public void issueFileOperation(WorkPane activePane, WorkPane passivePane, Class<? extends FileOperation> operationClass) {
         Constructor<?>[] declaredConstructors = operationClass.getDeclaredConstructors();
         Optional<Constructor<?>> matching = Arrays.stream(declaredConstructors)
@@ -56,7 +75,7 @@ public class OperationExecutor implements Executor {
         for (File sourceFile : activePane.getSelectedFiles()) {
             File targetFile = new File(passivePane.getWorkingDirectoryPath(), sourceFile.getName());
             try {
-                Operation operation = (Operation) constructor.newInstance(sourceFile, targetFile);
+                Operation operation = (Operation) constructor.newInstance(sourceFile.toPath(), targetFile.toPath());
                 executor.execute(operation.then(new RefreshOperation(passivePane))
                         .then(new RefreshOperation(activePane)));
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {

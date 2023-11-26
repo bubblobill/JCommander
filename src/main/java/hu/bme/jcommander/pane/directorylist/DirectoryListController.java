@@ -56,9 +56,9 @@ public class DirectoryListController implements SelectionController {
         }
 
         return listView.getSelectedValuesList()
-                       .stream()
-                       .map(handle -> new File(handle.getAbsolutePath()))
-                       .toList()
-                       .toArray(new File[0]);
+                .stream()
+                .map(handle -> new File(handle.getAbsolutePath()))
+                .toList()
+                .toArray(new File[0]);
     }
 }

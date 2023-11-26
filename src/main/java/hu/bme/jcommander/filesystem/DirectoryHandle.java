@@ -6,6 +6,11 @@ import java.io.File;
 
 public class DirectoryHandle extends FileHandle {
 
+    /**
+     * Constructs a handle representing a directory.
+     *
+     * @param directory the directory
+     */
     public DirectoryHandle(File directory) {
         super(directory);
         if (!directory.isDirectory()) {

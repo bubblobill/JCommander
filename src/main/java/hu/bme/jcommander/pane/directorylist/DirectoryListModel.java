@@ -13,6 +13,11 @@ public class DirectoryListModel implements ListModel<Handle> {
     private final List<ListDataListener> listeners = new ArrayList<>();
     private Handle[] files = new Handle[0];
 
+    /**
+     * Actualizes the model's content with the files provided.
+     *
+     * @param files the files represented by handles
+     */
     public void listDirectory(Handle[] files) {
         this.files = files;
         notifyAllContentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, files.length));

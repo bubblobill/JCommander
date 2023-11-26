@@ -6,6 +6,11 @@ import java.io.File;
 
 public class RegularFileHandle extends FileHandle {
 
+    /**
+     * Constructs a RegularFileHandle representing a regular file with the specified {@code file}.
+     *
+     * @param file the {@code File} object representing the regular file
+     */
     public RegularFileHandle(File file) {
         super(file);
     }

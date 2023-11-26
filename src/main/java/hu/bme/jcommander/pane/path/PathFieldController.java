@@ -13,6 +13,11 @@ public class PathFieldController implements Controller {
     private final WorkingDirectory wd;
     private final JTextField textField;
 
+    /**
+     * Constructs a PathFieldController with the specified {@code WorkingDirectory}.
+     *
+     * @param wd the working directory to be managed by this controller
+     */
     public PathFieldController(WorkingDirectory wd) {
         this.wd = wd;
         textField = new JTextField(32);

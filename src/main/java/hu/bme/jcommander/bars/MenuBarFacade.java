@@ -8,6 +8,11 @@ public class MenuBarFacade {
 
     private final JMenuBar menuBar;
 
+    /**
+     * Constructs a MenuBarFacade associated with the specified settings.
+     *
+     * @param settings the settings object to be attached to.
+     */
     public MenuBarFacade(Settings settings) {
         menuBar = new JMenuBar();
         JMenu fileMenu = new JMenu("File");
@@ -32,6 +37,11 @@ public class MenuBarFacade {
         menuBar.add(viewMenu);
     }
 
+    /**
+     * Retrieves the actual view as a menu bar component.
+     *
+     * @return the menu bar
+     */
     public JMenuBar get() {
         return menuBar;
     }

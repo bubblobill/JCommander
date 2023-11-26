@@ -3,7 +3,7 @@ package hu.bme.jcommander;
 import hu.bme.jcommander.bars.MenuBarFacade;
 import hu.bme.jcommander.bars.NavigationBarFacade;
 import hu.bme.jcommander.bars.ToolBarFacade;
-import hu.bme.jcommander.operation.*;
+import hu.bme.jcommander.operation.OperationExecutor;
 import hu.bme.jcommander.pane.WorkPane;
 import hu.bme.jcommander.settings.Settings;
 
@@ -17,15 +17,12 @@ import java.util.function.Supplier;
 
 public class CommanderInstance {
 
-    private static final String SETTINGS_FILE_NAME = "settings.txt";
-
-    private static final String INSTANCE_TITLE = "JCommander";
     public static final int WIDTH = 1280;
     public static final int HEIGHT = 720;
-
     public static final Color ACTIVE_COLOR = Color.RED;
     public static final Color PASSIVE_COLOR = Color.WHITE;
-
+    private static final String SETTINGS_FILE_NAME = "settings.txt";
+    private static final String INSTANCE_TITLE = "JCommander";
     private final Settings settings = new Settings(new File(SETTINGS_FILE_NAME));
 
     private final OperationExecutor executor = new OperationExecutor();
@@ -38,6 +35,14 @@ public class CommanderInstance {
     private WorkPane activePane;
     private WorkPane passivePane;
 
+    /**
+     * Initializes a CommanderInstance and encapsulates the segments of the UI into one cohesive class:
+     * <ul>
+     *     <li>sets up all the UI elements,</li>
+     *     <li>composes them into a layout,</li>
+     *     <li>then makes the window visible.</li>
+     * </ul>
+     */
     public CommanderInstance() {
         frame = new JFrame();
         frame.setTitle(INSTANCE_TITLE);
@@ -85,16 +90,7 @@ public class CommanderInstance {
         navBar = new NavigationBarFacade(paneA, paneB, getActivePane);
         toolBar = new ToolBarFacade(frame, executor, getActivePane, getPassivePane);
 
-        // by default, paneA is in foreground, and paneB is in background
-        setActiveAndPassivePane(paneA, paneB);
-
-        settings.addSettingChangedListener(event -> {
-            if (event.option() == Settings.Option.HIGHLIGHT_ACTIVE_PANE) {
-                setPaneBorderVisibility(Boolean.parseBoolean(event.value()));
-            }
-        });
-
-        settings.refreshSettings();
+        setActiveAndPassivePane(paneA, paneB); // by default, paneA is in foreground, and paneB is in background
 
         GroupLayout layout = new GroupLayout(frame.getContentPane());
 
@@ -119,6 +115,14 @@ public class CommanderInstance {
                                         .addComponent(paneB.component())
                         )
         );
+
+        settings.addSettingChangedListener(event -> {
+            if (event.option() == Settings.Option.HIGHLIGHT_ACTIVE_PANE) {
+                setPaneBorderVisibility(Boolean.parseBoolean(event.value()));
+            }
+        });
+
+        settings.refreshSettings();
 
         frame.getContentPane().setLayout(layout);
         frame.setVisible(true);

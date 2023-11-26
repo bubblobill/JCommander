@@ -11,10 +11,18 @@ public class WorkingDirectory {
 
     private final TrackedObject<Handle> trackedDirectory = new TrackedObject<>();
 
+    /**
+     * Resets the working directory to the root directory.
+     */
     public void resetToRoot() {
         trackedDirectory.set(new RootHandle());
     }
 
+    /**
+     * Sets the working directory to the specified directory if it is not a leaf node.
+     *
+     * @param directory the directory to set as the working directory.
+     */
     public void setTo(Handle directory) {
         if (directory.isLeaf()) {
             return;
@@ -23,46 +31,93 @@ public class WorkingDirectory {
         trackedDirectory.set(directory);
     }
 
-    public void addChangeListener(ChangeListener l) {
-        trackedDirectory.addChangeListener(l);
+    /**
+     * Adds a ChangeListener to listen for changes in the working directory.
+     *
+     * @param listener the ChangeListener to be added.
+     */
+    public void addChangeListener(ChangeListener listener) {
+        trackedDirectory.addChangeListener(listener);
     }
 
-    public void removeChangeListener(ChangeListener l) {
-        trackedDirectory.removeChangeListener(l);
+    /**
+     * Removes a ChangeListener from the list of listeners.
+     *
+     * @param listener the ChangeListener to be removed.
+     */
+    public void removeChangeListener(ChangeListener listener) {
+        trackedDirectory.removeChangeListener(listener);
     }
 
-    public void addHistoryChangeListener(HistoryChangeListener l) {
-        trackedDirectory.addHistoryChangeListener(l);
+    /**
+     * Adds a HistoryChangeListener to listen for changes in the working directory's history.
+     *
+     * @param listener the HistoryChangeListener to be added.
+     */
+    public void addHistoryChangeListener(HistoryChangeListener listener) {
+        trackedDirectory.addHistoryChangeListener(listener);
     }
 
-    public void removeHistoryChangeListener(HistoryChangeListener l) {
-        trackedDirectory.removeHistoryChangeListener(l);
+    /**
+     * Removes a HistoryChangeListener from the list of history listeners.
+     *
+     * @param listener the HistoryChangeListener to be removed.
+     */
+    public void removeHistoryChangeListener(HistoryChangeListener listener) {
+        trackedDirectory.removeHistoryChangeListener(listener);
     }
 
+    /**
+     * Returns an array of Handles representing the children of the current working directory.
+     *
+     * @return an array of Handles representing the children of the current working directory.
+     */
     public Handle[] list() {
         return trackedDirectory.get().getChildren();
     }
 
+    /**
+     * Returns the absolute path of the current working directory.
+     *
+     * @return the absolute path of the current working directory.
+     */
     public String getAbsolutePath() {
         return trackedDirectory.get().getAbsolutePath();
     }
 
+    /**
+     * Sets the working directory to its parent directory.
+     */
     public void selectParent() {
         setTo(trackedDirectory.get().getParent());
     }
 
+    /**
+     * Notifies all listeners about changes in the working directory's history.
+     */
     public void notifyAllAboutWdHistory() {
         trackedDirectory.notifyAllAboutHistory();
     }
 
+    /**
+     * Undoes the last change in the working directory's history.
+     */
     public void selectPrevious() {
         trackedDirectory.undo();
     }
 
+    /**
+     * Redoes the last undone change in the working directory's history.
+     */
     public void selectNext() {
         trackedDirectory.redo();
     }
 
+    /**
+     * Checks if the current working directory is the root directory.
+     *
+     * @return true if the current working directory is the root directory, false otherwise.
+     */
     public boolean isRoot() {
         return trackedDirectory.get() instanceof RootHandle;
     }

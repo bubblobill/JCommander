@@ -13,6 +13,11 @@ public class TrackedObject<T> {
     private boolean hasBeenSet = false;
     private T object = null;
 
+    /**
+     * Sets a new value for the tracked object and notifies listeners of the change.
+     *
+     * @param newObject the new value for the tracked object
+     */
     public void set(T newObject) {
         if (!Objects.equals(object, newObject)) {
             redoHistory.clear();
@@ -24,14 +29,22 @@ public class TrackedObject<T> {
             object = newObject;
         }
 
-        // it should be indistinguishable from a ChangeEventListener whether we actually changed the history or not
+        // It should be indistinguishable from a ChangeEventListener whether we actually changed the history or not.
         notifyAllObjectChanged(new ChangeEvent(this));
     }
 
+    /**
+     * Gets the current value of the tracked object.
+     *
+     * @return the current value of the tracked object
+     */
     public T get() {
         return object;
     }
 
+    /**
+     * Undoes the last change to the tracked object and notifies listeners of the change.
+     */
     public void undo() {
         T undid = undoHistory.pop();
         redoHistory.push(object);
@@ -40,6 +53,9 @@ public class TrackedObject<T> {
         notifyAllHistoryChanged(new HistoryChangedEvent(this, !undoHistory.isEmpty(), true));
     }
 
+    /**
+     * Redoes the last undone change to the tracked object and notifies listeners of the change.
+     */
     public void redo() {
         T redid = redoHistory.pop();
         undoHistory.push(object);
@@ -47,7 +63,6 @@ public class TrackedObject<T> {
         notifyAllObjectChanged(new ChangeEvent(this));
         notifyAllHistoryChanged(new HistoryChangedEvent(this, true, !redoHistory.isEmpty()));
     }
-
 
     private void notifyAllObjectChanged(ChangeEvent e) {
         for (ChangeListener listener : objectChangeListeners) {
@@ -61,23 +76,46 @@ public class TrackedObject<T> {
         }
     }
 
-    public void addChangeListener(ChangeListener l) {
-        objectChangeListeners.add(l);
-    }
-
-    public void removeChangeListener(ChangeListener l) {
-        objectChangeListeners.remove(l);
-    }
-
-    public void addHistoryChangeListener(HistoryChangeListener l) {
-        historyChangeListeners.add(l);
-    }
-
-    public void removeHistoryChangeListener(HistoryChangeListener l) {
-        historyChangeListeners.remove(l);
-    }
-
+    /**
+     * Notifies all listeners about the current state of undo and redo operations.
+     */
     public void notifyAllAboutHistory() {
         notifyAllHistoryChanged(new HistoryChangedEvent(this, !undoHistory.isEmpty(), !redoHistory.isEmpty()));
+    }
+
+    /**
+     * Adds a ChangeListener to be notified of changes to the tracked object.
+     *
+     * @param listener the ChangeListener to be added
+     */
+    public void addChangeListener(ChangeListener listener) {
+        objectChangeListeners.add(listener);
+    }
+
+    /**
+     * Removes a ChangeListener from the list of listeners.
+     *
+     * @param listener the ChangeListener to be removed
+     */
+    public void removeChangeListener(ChangeListener listener) {
+        objectChangeListeners.remove(listener);
+    }
+
+    /**
+     * Adds a HistoryChangeListener to be notified of changes to the history of the tracked object.
+     *
+     * @param listener the HistoryChangeListener to be added
+     */
+    public void addHistoryChangeListener(HistoryChangeListener listener) {
+        historyChangeListeners.add(listener);
+    }
+
+    /**
+     * Removes a HistoryChangeListener from the list of history listeners.
+     *
+     * @param listener the HistoryChangeListener to be removed
+     */
+    public void removeHistoryChangeListener(HistoryChangeListener listener) {
+        historyChangeListeners.remove(listener);
     }
 }

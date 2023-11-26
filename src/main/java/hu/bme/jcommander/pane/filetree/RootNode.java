@@ -15,11 +15,19 @@ public class RootNode implements TreeNode, FsNode {
     private final RootHandle root;
     private final List<FileNode> children = new ArrayList<>();
 
+    /**
+     * Constructs a RootNode with the specified root handle.
+     *
+     * @param root the root handle representing the root of the file system
+     */
     public RootNode(RootHandle root) {
         this.root = root;
         refresh();
     }
 
+    /**
+     * Refreshes the child nodes of the root node.
+     */
     public void refresh() {
         children.clear();
         for (Handle mount : root.getChildren()) {

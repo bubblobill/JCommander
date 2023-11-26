@@ -12,6 +12,11 @@ public class ParentButtonController implements Controller {
     private final WorkingDirectory wd;
     private final JButton button;
 
+    /**
+     * Constructs a ParentButtonController with the specified {@code WorkingDirectory}.
+     *
+     * @param wd the working directory to be managed by this controller
+     */
     public ParentButtonController(WorkingDirectory wd) {
         this.wd = wd;
 

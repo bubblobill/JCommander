@@ -17,9 +17,20 @@ public class ResourceFactory {
     private static final int ICON_SIZE = 48;
 
     private ResourceFactory() {
-        // So that it cannot be instantiated from outside.
+        // Prevent instantiation from outside the class.
     }
 
+    /**
+     * Creates an icon of the given type.
+     *
+     * <p>
+     * As an optimization, it might not instantiate a new Icon, but instead will try to reuse a previously loaded
+     * icon of the same type. This mechanism can be thought of as caching or as an example of the Flyweight Pattern.
+     * </p>
+     *
+     * @param type the type of icon
+     * @return an icon of the given type
+     */
     public static Icon getIcon(IconType type) {
         SoftReference<Icon> iconRef;
         Icon icon;

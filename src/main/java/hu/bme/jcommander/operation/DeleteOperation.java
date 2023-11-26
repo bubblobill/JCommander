@@ -8,6 +8,11 @@ public class DeleteOperation extends Operation {
 
     private final File[] filesToDelete;
 
+    /**
+     * Constructs a DeleteOperation with the specified array of files to be deleted.
+     *
+     * @param selectedFiles the array of files to be deleted
+     */
     public DeleteOperation(File[] selectedFiles) {
         this.filesToDelete = selectedFiles;
     }

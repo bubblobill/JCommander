@@ -8,6 +8,9 @@ public class RootHandle implements Handle {
 
     private final Handle[] children;
 
+    /**
+     * Constructs a RootHandle representing the system root in a file system.
+     */
     public RootHandle() {
         File[] mountPoints = File.listRoots();
         children = new Handle[mountPoints.length];
@@ -19,7 +22,7 @@ public class RootHandle implements Handle {
 
     @Override
     public String getAbsolutePath() {
-        return ""; // root's path is an empty string
+        return ""; // The root's path is an empty string.
     }
 
     @Override
@@ -29,7 +32,7 @@ public class RootHandle implements Handle {
 
     @Override
     public Handle getParent() {
-        return null; // root has no parents
+        return null; // The root has no parents.
     }
 
     @Override

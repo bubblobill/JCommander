@@ -16,6 +16,12 @@ public class FileNode implements TreeNode, FsNode {
     private final List<FileNode> children = new ArrayList<>();
     private final FileHandle file;
 
+    /**
+     * Constructs a FileNode with a pre-known parent node.
+     *
+     * @param file   the underlying file
+     * @param parent the node of the underlying file's parent
+     */
     public FileNode(FileHandle file, FileNode parent) {
         if (file == null) {
             throw new IllegalArgumentException("Descriptor shall not be null.");
@@ -25,10 +31,21 @@ public class FileNode implements TreeNode, FsNode {
         this.file = file;
     }
 
+    /**
+     * Constructs a FileNode representing a file from the file system as a node in the model of a JTree.
+     *
+     * @param file the underlying file
+     */
     public FileNode(FileHandle file) {
         this(file, null);
     }
 
+    /**
+     * Renames the underlying file.
+     *
+     * @param newName the new name to be given to the file
+     * @return true if the operation succeeded, false otherwise
+     */
     public boolean rename(String newName) {
         try {
             file.rename(newName);
@@ -38,6 +55,9 @@ public class FileNode implements TreeNode, FsNode {
         }
     }
 
+    /**
+     * Loads the children of this node's underlying file as individual FileNodes.
+     */
     public void lazyLoadChildren() {
         children.clear();
         for (Handle child : file.getChildren()) {

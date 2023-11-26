@@ -29,6 +29,11 @@ public class WorkPane implements SelectionController, SettingChangeListener {
     private final SelectionController list;
     private final JSplitPane views;
 
+    /**
+     * Constructs a new WorkPane using the provided ComponentFactory.
+     *
+     * @param factory the ComponentFactory to be used to create Controllers
+     */
     public WorkPane(ComponentFactory factory) {
 
         panel = new JPanel();
@@ -59,11 +64,19 @@ public class WorkPane implements SelectionController, SettingChangeListener {
         panel.setPreferredSize(panel.getPreferredSize());
     }
 
+    /**
+     * Returns the component representing this WorkPane.
+     *
+     * @return the JPanel representing this WorkPane
+     */
     @Override
     public JComponent component() {
         return panel;
     }
 
+    /**
+     * Refreshes the UI components within the WorkPane.
+     */
     @Override
     public void refresh() {
         parentButton.refresh();
@@ -72,35 +85,69 @@ public class WorkPane implements SelectionController, SettingChangeListener {
         list.refresh();
     }
 
+    /**
+     * Notifies all listeners about changes in the working directory's history.
+     */
     public void notifyAllAboutWdHistory() {
         wd.notifyAllAboutWdHistory();
     }
 
+    /**
+     * Undoes the last change in the working directory's history.
+     */
     public void selectPrevious() {
         wd.selectPrevious();
     }
 
+    /**
+     * Redoes the last undone change in the working directory's history.
+     */
     public void selectNext() {
         wd.selectNext();
     }
 
+    /**
+     * Returns the absolute path of the current working directory.
+     *
+     * @return the absolute path of the current working directory
+     */
     public String getWorkingDirectoryPath() {
         return wd.getAbsolutePath();
     }
 
+    /**
+     * Returns the selected files in the directory list.
+     *
+     * @return an array of selected files
+     */
     @Override
     public File[] getSelectedFiles() {
         return list.getSelectedFiles();
     }
 
-    public void addHistoryChangeListener(HistoryChangeListener l) {
-        wd.addHistoryChangeListener(l);
+    /**
+     * Adds a HistoryChangeListener to listen for changes in the working directory's history.
+     *
+     * @param listener the HistoryChangeListener to be added
+     */
+    public void addHistoryChangeListener(HistoryChangeListener listener) {
+        wd.addHistoryChangeListener(listener);
     }
 
-    public void removeHistoryChangeListener(HistoryChangeListener l) {
-        wd.removeHistoryChangeListener(l);
+    /**
+     * Removes a HistoryChangeListener from the list of history listeners.
+     *
+     * @param listener the HistoryChangeListener to be removed
+     */
+    public void removeHistoryChangeListener(HistoryChangeListener listener) {
+        wd.removeHistoryChangeListener(listener);
     }
 
+    /**
+     * Handles changes in application settings.
+     *
+     * @param event the event representing the changed setting
+     */
     @Override
     public void settingChanged(SettingChangedEvent event) {
         if (event.option() == Settings.Option.SHOW_TREE_VIEW) {

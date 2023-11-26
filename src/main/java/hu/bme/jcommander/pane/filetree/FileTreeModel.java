@@ -64,21 +64,10 @@ public class FileTreeModel implements TreeModel {
         listeners.remove(l);
     }
 
-    public void refreshPath(TreePath path) {
-        FileNode node = (FileNode) path.getLastPathComponent();
-        node.lazyLoadChildren();
-        notifyAllStructureChanged(new TreeModelEvent(this, path));
-    }
-
     private void notifyAllNodeChanged(TreeModelEvent e) {
         for (TreeModelListener listener : listeners) {
             listener.treeNodesChanged(e);
         }
     }
 
-    private void notifyAllStructureChanged(TreeModelEvent e) {
-        for (TreeModelListener listener : listeners) {
-            listener.treeStructureChanged(e);
-        }
-    }
 }

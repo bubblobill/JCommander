@@ -1,12 +1,18 @@
 package hu.bme.jcommander.operation;
 
-import java.io.File;
+import java.nio.file.Path;
 
 public abstract class FileOperation extends Operation {
-    protected final File from;
-    protected final File to;
+    protected final Path from;
+    protected final Path to;
 
-    protected FileOperation(File from, File to) {
+    /**
+     * An operation working with two operands with each being a path representing a file or directory.
+     *
+     * @param from the source location
+     * @param to   the destination location
+     */
+    protected FileOperation(Path from, Path to) {
         this.from = from;
         this.to = to;
     }
