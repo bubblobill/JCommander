@@ -9,12 +9,14 @@ import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class FileSystemMock {
+public class FileSystemTest {
 
     protected FileSystem fs;
     protected Path srcDir;
     protected Path srcF1;
     protected Path srcD1;
+    protected Path srcD2;
+    protected Path srcD3;
     protected Path dstDir;
     protected Path dstF1;
     protected Path dstF2;
@@ -31,7 +33,11 @@ public class FileSystemMock {
         Files.writeString(srcF1, "F1 from src");
         srcD1 = fs.getPath("/src/D1/");
         Files.createDirectory(srcD1);
-        
+        srcD2 = fs.getPath("/src/D2/");
+        Files.createDirectory(srcD2);
+        srcD3 = fs.getPath("/src/D3/");
+        Files.createDirectory(srcD3);
+
         dstDir = fs.getPath("/dst");
         Files.createDirectory(dstDir);
 

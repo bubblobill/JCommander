@@ -1,9 +1,6 @@
 package hu.bme.jcommander.pane.model;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import hu.bme.jcommander.filesystem.FileHandleBuilder;
-import hu.bme.jcommander.filesystem.RootHandle;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,16 +10,18 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
-public class WorkingDirectoryTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-    private boolean parentExisted;
-    private File parentDir;
-    private boolean childExisted;
-    private File childDir;
+class WorkingDirectoryTest {
+
+    private static boolean parentExisted;
+    private static File parentDir;
+    private static boolean childExisted;
+    private static File childDir;
     private WorkingDirectory directory;
 
     @BeforeAll
-    public void createFiles() throws IOException {
+    public static void createFiles() throws IOException {
         String userHome = System.getProperty("user.home");
 
         parentDir = new File(userHome + File.separator + "dir1");
@@ -40,7 +39,7 @@ public class WorkingDirectoryTest {
     }
 
     @AfterAll
-    public void deleteFiles() throws IOException {
+    public static void deleteFiles() throws IOException {
         if (!childExisted) {
             Files.delete(childDir.toPath());
         }
@@ -56,18 +55,13 @@ public class WorkingDirectoryTest {
     }
 
     @Test
-    public void testInitialDirectory() {
+    void testSetToRoot() {
+        directory.resetToRoot();
         assertEquals("", directory.getAbsolutePath());
     }
 
     @Test
-    public void testSetToRoot() {
-        directory.setTo(new RootHandle());
-        assertEquals("", directory.getAbsolutePath());
-    }
-
-    @Test
-    public void testSetToMountPoint() {
+    void testSetToMountPoint() {
         File location = File.listRoots()[0];
 
         directory.setTo(new FileHandleBuilder().setFile(location).toFileHandle());
@@ -75,14 +69,14 @@ public class WorkingDirectoryTest {
     }
 
     @Test
-    public void testSelectParent() {
+    void testSelectParent() {
         directory.setTo(new FileHandleBuilder(childDir).toFileHandle());
         directory.selectParent();
         assertEquals(parentDir.getAbsolutePath(), directory.getAbsolutePath());
     }
 
     @Test
-    public void testNavigation() {
+    void testNavigation() {
         directory.setTo(new FileHandleBuilder(parentDir).toFileHandle());
         directory.setTo(new FileHandleBuilder(childDir).toFileHandle());
         directory.selectParent();
