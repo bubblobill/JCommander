@@ -47,7 +47,7 @@ public class OperationExecutor implements Executor {
      * @param parent        the parent component for displaying the confirmation dialog
      * @param selectedFiles the files to be deleted
      */
-    public void issueDeleteOperation(WorkPane activePane, Component parent, File[] selectedFiles) {
+    public void issueDeleteOperation(WorkPane activePane, Component parent, Path[] selectedFiles) {
         String title = "Delete Files";
         String message = "Are you sure you want to delete every selected file and directory?";
         if (JOptionPane.showConfirmDialog(parent, message, title, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {

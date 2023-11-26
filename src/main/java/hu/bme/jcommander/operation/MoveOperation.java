@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+
 public class MoveOperation extends FileOperation {
 
     /**
@@ -19,7 +21,7 @@ public class MoveOperation extends FileOperation {
     @Override
     public void run() {
         try {
-            Files.move(from, to);
+            Files.move(from, to, REPLACE_EXISTING);
         } catch (SecurityException | IOException ignored) {
             failed = true;
         }

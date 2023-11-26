@@ -8,6 +8,9 @@ import hu.bme.jcommander.settings.IconType;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.function.Supplier;
 
 import static hu.bme.jcommander.ResourceFactory.getIcon;
@@ -40,7 +43,8 @@ public class ToolBarFacade {
         JButton delete = new JButton();
         delete.setFocusable(false);
         delete.setIcon(getIcon(IconType.DELETE));
-        delete.addActionListener(e -> executor.issueDeleteOperation(activePane.get(), parent, activePane.get().getSelectedFiles()));
+        delete.addActionListener(e -> executor.issueDeleteOperation(activePane.get(), parent,
+                (Path[]) Arrays.stream(activePane.get().getSelectedFiles()).map(File::toPath).toArray()));
         centerBar.add(delete);
 
         // Copy button

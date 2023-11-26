@@ -17,9 +17,6 @@ public class NewDirectoryOperation extends Operation {
         this.path = path;
     }
 
-    /**
-     * Executes the operation, creating a new directory at the specified path.
-     */
     @Override
     public void run() {
         try {
