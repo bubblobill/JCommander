@@ -1,4 +1,4 @@
-# Két paneles fájlkezelő applikáció
+# Két paneles fájlkezelő applikáció - felhasználói kézikönyv
 
 ## Alapok, terminológia
 
@@ -89,5 +89,6 @@ eldöntheti, hogy biztosan szeretné-e végrehajtani a műveletet.
 # Beállítások módosítása
 
 A menüszalag "Settings" menüjében két menüpont található:
+
 * "Show Tree View": bekapcsolt állapotban megjeleníti a paneleken a fa-nézetet is a lista-nézet mellett
 * "Highlight Active Pane": bekapcsolt állapotban piros színű keretet kap a mindenkori aktív panel

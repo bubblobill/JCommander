@@ -1,4 +1,4 @@
-# Két paneles fájlkezelő applikáció
+# Két paneles fájlkezelő applikáció - specifikáció
 
 ## Bevezetés
 
@@ -22,6 +22,7 @@ kerülnek a másolandó vagy áthelyezendő elemek.
 ## Use-case-ek
 
 A program által **támogatott műveletek**:
+
  * navigálás **"lefelé"** (gyerek objektumok: mappa vagy csatolási pont)
  * navigálás **"felfelé"** (szülő objektumok: mappa, csatolási pont vagy gyökér elem)
  * navigálás az **előző munkamappába** (ahol a jelenlegibe navigálás előtt volt)

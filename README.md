@@ -9,6 +9,4 @@ A light-weight, TotalCommander inspired, dual-pane file manager written in Java.
 - [x] Encapsulate working directory
   - [x] Handle things properly when nothing is selected
   - [x] History should store previous versions of the object
-- [ ] Fix TODOs spread across the whole codebase
-- [ ] Tool tips for tree and list entries showing all sorts of useful info
-  - [ ] Name and size in MB 
+- [x] Fix TODOs spread across the whole codebase
