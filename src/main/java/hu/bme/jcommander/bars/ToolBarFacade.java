@@ -44,7 +44,7 @@ public class ToolBarFacade {
         delete.setFocusable(false);
         delete.setIcon(getIcon(IconType.DELETE));
         delete.addActionListener(e -> executor.issueDeleteOperation(activePane.get(), parent,
-                (Path[]) Arrays.stream(activePane.get().getSelectedFiles()).map(File::toPath).toArray()));
+                Arrays.stream(activePane.get().getSelectedFiles()).map(File::toPath).toList().toArray(new Path[0])));
         centerBar.add(delete);
 
         // Copy button
