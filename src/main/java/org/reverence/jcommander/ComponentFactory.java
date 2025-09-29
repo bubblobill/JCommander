@@ -8,7 +8,6 @@ import org.reverence.jcommander.settings.Setting;
 import org.reverence.jcommander.settings.SettingChangeListener;
 import org.reverence.jcommander.settings.Settings;
 
-import javax.swing.*;
 import java.awt.event.FocusListener;
 import java.lang.reflect.Constructor;
 
@@ -44,10 +43,11 @@ public class ComponentFactory {
 
             T instance = constructor.newInstance(args);
             instance.component().addFocusListener(listener);
-            instance.component().setBorder(BorderFactory.createEmptyBorder(1,2,1,2));
+
             if (instance instanceof SettingChangeListener settingChangeListener) {
                 Setting.SETTINGS.addSettingChangedListener(settingChangeListener);
             }
+
             return instance;
         } catch (Exception e) {
             return null;

@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import static org.reverence.jcommander.settings.Setting.TRANSPARENT;
+
 public class Settings {
     private final File file;
     private final Properties properties = new Properties();
@@ -128,6 +130,12 @@ public class Settings {
         PASSIVE_COLOR(Color.WHITE.getRGB()),
         SHOW_TREE_VIEW(true),
         HIGHLIGHT_ACTIVE_PANE(false),
+        CELL_BORDER_COLOUR_SELECTED(Color.BLUE.getRGB()),
+        CELL_BACKGROUND_COLOUR_SELECTED(Color.BLUE.getRGB()),
+        CELL_FONT_COLOUR_SELECTED(Color.WHITE.getRGB()),
+        CELL_BORDER_COLOUR(TRANSPARENT.getRGB()),
+        CELL_BACKGROUND_COLOUR(Color.WHITE.getRGB()),
+        CELL_FONT_COLOUR(Color.BLACK.getRGB()),
         ICON_SIZE(32),
         FONT_SIZE(13.5f)
         ;
