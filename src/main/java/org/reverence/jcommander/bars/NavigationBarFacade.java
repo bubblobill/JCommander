@@ -4,6 +4,7 @@ package org.reverence.jcommander.bars;
 Code swiped from <a href="https://github.com/Zotyamester/JCommander">github.com/Zotyamester/JCommander</a> before I abused it. They get all the credit.
  */
 import org.reverence.jcommander.pane.WorkPane;
+import org.reverence.jcommander.settings.I18n;
 import org.reverence.jcommander.settings.IconType;
 
 import javax.swing.*;
@@ -12,9 +13,7 @@ import java.util.function.Supplier;
 import static org.reverence.jcommander.ResourceFactory.getIcon;
 
 public class NavigationBarFacade {
-
     private final JToolBar navBar;
-
     private final JButton previous;
     private final JButton next;
 
@@ -30,6 +29,7 @@ public class NavigationBarFacade {
         navBar.setFloatable(false);
 
         JButton refresh = new JButton();
+        refresh.setToolTipText(I18n.getText("button.tooltip.refresh"));
         refresh.setFocusable(false);
         refresh.setIcon(getIcon(IconType.REFRESH));
         refresh.addActionListener(e -> {
@@ -39,12 +39,14 @@ public class NavigationBarFacade {
         navBar.add(refresh);
 
         previous = new JButton();
+        previous.setToolTipText(I18n.getText("button.tooltip.previous"));
         previous.setFocusable(false);
         previous.setIcon(getIcon(IconType.LEFT));
         previous.addActionListener(e -> activePane.get().selectPrevious());
         navBar.add(previous);
 
         next = new JButton();
+        next.setToolTipText(I18n.getText("button.tooltip.next"));
         next.setFocusable(false);
         next.setIcon(getIcon(IconType.RIGHT));
         next.addActionListener(e -> activePane.get().selectNext());

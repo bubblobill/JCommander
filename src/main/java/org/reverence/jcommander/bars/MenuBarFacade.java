@@ -8,16 +8,16 @@ import org.reverence.jcommander.settings.Settings;
 
 import javax.swing.*;
 
+import static org.reverence.jcommander.settings.Setting.SETTINGS;
+
 public class MenuBarFacade {
 
     private final JMenuBar menuBar;
 
     /**
      * Constructs a MenuBarFacade associated with the specified settings.
-     *
-     * @param settings the settings object to be attached to.
      */
-    public MenuBarFacade(Settings settings) {
+    public MenuBarFacade() {
         menuBar = new JMenuBar();
         JMenu fileMenu = new JMenu(I18n.getText("menu.file"));
         JMenuItem exitItem = new JMenuItem(I18n.getText("menu.exit"));
@@ -29,13 +29,13 @@ public class MenuBarFacade {
         JMenu viewMenu = new JMenu(I18n.getText("menu.view"));
 
         JCheckBoxMenuItem showTreeView = new JCheckBoxMenuItem(I18n.getText("menu.show.tree"));
-        showTreeView.setSelected(Boolean.parseBoolean(settings.get(Settings.Option.SHOW_TREE_VIEW)));
-        showTreeView.addActionListener(event -> settings.set(Settings.Option.SHOW_TREE_VIEW, showTreeView.isSelected()));
+        showTreeView.setSelected(Boolean.parseBoolean(SETTINGS.get(Settings.Option.SHOW_TREE_VIEW)));
+        showTreeView.addActionListener(event -> SETTINGS.set(Settings.Option.SHOW_TREE_VIEW, showTreeView.isSelected()));
         viewMenu.add(showTreeView);
 
         JCheckBoxMenuItem highlightActivePane = new JCheckBoxMenuItem(I18n.getText("menu.highlight.active.pane"));
-        highlightActivePane.setSelected(Boolean.parseBoolean(settings.get(Settings.Option.HIGHLIGHT_ACTIVE_PANE)));
-        highlightActivePane.addActionListener(event -> settings.set(Settings.Option.HIGHLIGHT_ACTIVE_PANE, highlightActivePane.isSelected()));
+        highlightActivePane.setSelected(Boolean.parseBoolean(SETTINGS.get(Settings.Option.HIGHLIGHT_ACTIVE_PANE)));
+        highlightActivePane.addActionListener(event -> SETTINGS.set(Settings.Option.HIGHLIGHT_ACTIVE_PANE, highlightActivePane.isSelected()));
         viewMenu.add(highlightActivePane);
 
         menuBar.add(viewMenu);

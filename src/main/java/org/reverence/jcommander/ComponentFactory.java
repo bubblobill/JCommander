@@ -4,26 +4,24 @@ package org.reverence.jcommander;
 Code swiped from <a href="https://github.com/Zotyamester/JCommander">github.com/Zotyamester/JCommander</a> before I abused it. They get all the credit.
  */
 import org.reverence.jcommander.pane.Controller;
+import org.reverence.jcommander.settings.Setting;
 import org.reverence.jcommander.settings.SettingChangeListener;
 import org.reverence.jcommander.settings.Settings;
 
+import javax.swing.*;
 import java.awt.event.FocusListener;
 import java.lang.reflect.Constructor;
 
 public class ComponentFactory {
-
     private final FocusListener listener;
-    private final Settings settings;
 
     /**
      * Initializes a ComponentFactory responsible for the creation of Controller's subclasses.
      *
      * @param listener a listener to invoke from the Controller's component, when it gains or loses focus
-     * @param settings a setting to be passed to the instantiated Controllers' components
      */
-    public ComponentFactory(FocusListener listener, Settings settings) {
+    public ComponentFactory(FocusListener listener) {
         this.listener = listener;
-        this.settings = settings;
     }
 
     /**
@@ -46,11 +44,10 @@ public class ComponentFactory {
 
             T instance = constructor.newInstance(args);
             instance.component().addFocusListener(listener);
-
+            instance.component().setBorder(BorderFactory.createEmptyBorder(1,2,1,2));
             if (instance instanceof SettingChangeListener settingChangeListener) {
-                settings.addSettingChangedListener(settingChangeListener);
+                Setting.SETTINGS.addSettingChangedListener(settingChangeListener);
             }
-
             return instance;
         } catch (Exception e) {
             return null;

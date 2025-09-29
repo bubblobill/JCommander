@@ -7,6 +7,7 @@ import org.reverence.jcommander.operation.CopyOperation;
 import org.reverence.jcommander.operation.MoveOperation;
 import org.reverence.jcommander.operation.OperationExecutor;
 import org.reverence.jcommander.pane.WorkPane;
+import org.reverence.jcommander.settings.I18n;
 import org.reverence.jcommander.settings.IconType;
 
 import javax.swing.*;
@@ -37,6 +38,7 @@ public class ToolBarFacade {
 
         // New Directory button
         JButton newDir = new JButton();
+        newDir.setToolTipText(I18n.getText("button.tooltip.new.directory"));
         newDir.setFocusable(false);
         newDir.setIcon(getIcon(IconType.NEW_DIRECTORY));
         newDir.addActionListener(e -> executor.issueNewDirectoryOperation(activePane.get()));
@@ -44,6 +46,7 @@ public class ToolBarFacade {
 
         // Delete button
         JButton delete = new JButton();
+        delete.setToolTipText(I18n.getText("button.tooltip.delete"));
         delete.setFocusable(false);
         delete.setIcon(getIcon(IconType.DELETE));
         delete.addActionListener(e -> executor.issueDeleteOperation(activePane.get(), parent,
@@ -52,6 +55,7 @@ public class ToolBarFacade {
 
         // Copy button
         JButton copy = new JButton();
+        copy.setToolTipText(I18n.getText("button.tooltip.copy"));
         copy.setFocusable(false);
         copy.setIcon(getIcon(IconType.COPY));
         copy.addActionListener(e -> executor.issueFileOperation(activePane.get(), passivePane.get(), CopyOperation.class));
@@ -59,6 +63,7 @@ public class ToolBarFacade {
 
         // Move button
         JButton move = new JButton();
+        move.setToolTipText(I18n.getText("button.tooltip.move"));
         move.setFocusable(false);
         move.setIcon(getIcon(IconType.MOVE));
         move.addActionListener(e -> executor.issueFileOperation(activePane.get(), passivePane.get(), MoveOperation.class));

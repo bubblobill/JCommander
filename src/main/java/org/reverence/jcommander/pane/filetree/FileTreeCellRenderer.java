@@ -22,6 +22,7 @@ public class FileTreeCellRenderer implements TreeCellRenderer {
         Handle handle = node.getHandle();
 
         // because of Java API, our best chances are to utilize this totally not side effect free function
+        renderer.setBorder(BorderFactory.createLineBorder(Color.BLUE,1));
         renderer.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
         renderer.setIcon(ResourceFactory.getIcon(handle.getAssociatedIcon()));
         renderer.setEnabled(tree.isEnabled());

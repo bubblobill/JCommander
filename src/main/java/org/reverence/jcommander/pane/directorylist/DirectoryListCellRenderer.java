@@ -16,7 +16,7 @@ public class DirectoryListCellRenderer implements ListCellRenderer<Handle> {
     @Override
     public Component getListCellRendererComponent(JList<? extends Handle> list, Handle handle, int index, boolean isSelected, boolean cellHasFocus) {
         JLabel cell = (JLabel) defaultRenderer.getListCellRendererComponent(list, handle, index, isSelected, cellHasFocus);
-
+        cell.setBorder(BorderFactory.createLineBorder(Color.BLUE,1));
         cell.setText(handle.getName());
         cell.setIcon(ResourceFactory.getIcon(handle.getAssociatedIcon()));
 

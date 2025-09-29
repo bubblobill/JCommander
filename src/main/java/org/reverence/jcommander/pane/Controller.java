@@ -6,7 +6,6 @@ Code swiped from <a href="https://github.com/Zotyamester/JCommander">github.com/
 import javax.swing.*;
 
 public interface Controller {
-
     /**
      * Retrieves the controller's view as a component.
      *

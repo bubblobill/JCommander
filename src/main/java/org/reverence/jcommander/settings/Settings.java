@@ -3,6 +3,7 @@ package org.reverence.jcommander.settings;
 /*
 Code swiped from <a href="https://github.com/Zotyamester/JCommander">github.com/Zotyamester/JCommander</a> before I abused it. They get all the credit.
  */
+import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +11,6 @@ import java.util.Map;
 import java.util.Properties;
 
 public class Settings {
-
     private final File file;
     private final Properties properties = new Properties();
     private final List<SettingChangeListener> settingChangeListeners = new ArrayList<>();
@@ -22,7 +22,6 @@ public class Settings {
      */
     public Settings(File file) {
         this.file = file;
-
         try {
             load();
         } catch (IOException e) {
@@ -34,7 +33,6 @@ public class Settings {
         if (!file.exists()) {
             return;
         }
-
         try (InputStream is = new FileInputStream(file)) {
             properties.load(is);
         }
@@ -53,6 +51,9 @@ public class Settings {
      * @param value  the new value for the option
      */
     public void set(Option option, Object value) {
+        if(value instanceof Color color){
+            value = color.getRGB();
+        }
         String valueAsString = value.toString();
         properties.setProperty(option.toString(), valueAsString);
 
@@ -73,6 +74,16 @@ public class Settings {
      */
     public String get(Option option) {
         return properties.getProperty(option.toString(), option.defaultValue.toString());
+    }
+
+    /**
+     * Gets the value for the specified option, or its default value if not set.
+     *
+     * @param option the option to retrieve the value for
+     * @return the value of the option
+     */
+    public Color getColour(Option option) {
+        return new Color(Integer.parseInt(get(option)));
     }
 
     /**
@@ -113,9 +124,13 @@ public class Settings {
      * Represents available options in the application settings.
      */
     public enum Option {
+        ACTIVE_COLOR(Color.RED.getRGB()),
+        PASSIVE_COLOR(Color.WHITE.getRGB()),
         SHOW_TREE_VIEW(true),
-        HIGHLIGHT_ACTIVE_PANE(false);
-
+        HIGHLIGHT_ACTIVE_PANE(false),
+        ICON_SIZE(32),
+        FONT_SIZE(13.5f)
+        ;
         private final Object defaultValue;
 
         Option(Object defaultValue) {

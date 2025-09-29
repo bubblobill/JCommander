@@ -6,12 +6,12 @@ Code swiped from <a href="https://github.com/Zotyamester/JCommander">github.com/
 import org.reverence.jcommander.ResourceFactory;
 import org.reverence.jcommander.pane.Controller;
 import org.reverence.jcommander.pane.model.WorkingDirectory;
+import org.reverence.jcommander.settings.I18n;
 import org.reverence.jcommander.settings.IconType;
 
 import javax.swing.*;
 
 public class ParentButtonController implements Controller {
-
     private final WorkingDirectory wd;
     private final JButton button;
 
@@ -22,9 +22,9 @@ public class ParentButtonController implements Controller {
      */
     public ParentButtonController(WorkingDirectory wd) {
         this.wd = wd;
-
         button = new JButton(ResourceFactory.getIcon(IconType.UP));
         button.addActionListener(e -> wd.selectParent());
+        button.setToolTipText(I18n.getText("button.tooltip.up"));
     }
 
     @Override
